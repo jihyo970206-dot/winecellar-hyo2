@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>와인창고 | 오늘의 취향 와인 찾기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  :root{
+    --bg:#1F1219;
+    --surface:#2B1620;
+    --surface-hover:#361C29;
+    --text-primary:#F3E9DC;
+    --text-secondary:#C7AFA0;
+    --gold:#C9A227;
+    --red-wine:#7A1F2B;
+    --white-wine:#D9C77A;
+    --sparkling-wine:#E8D9A0;
+    --border: rgba(243,233,220,0.14);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text-primary);
+    font-family:'Pretendard', sans-serif;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+  }
+  .page{
+    width:100%;
+    max-width:430px;
+    padding:2.5rem 1.5rem 3rem;
+  }
+  .brand{ text-align:center; margin-bottom:1.75rem; }
+  .brand-mark{
+    font-family:'Noto Serif KR', serif;
+    font-weight:700;
+    font-size:22px;
+    letter-spacing:0.04em;
+    margin:0;
+  }
+  .brand-tag{ font-size:13px; color:var(--text-secondary); margin:6px 0 0; }
+  .glass-wrap{ display:flex; justify-content:center; margin:0.5rem 0 1.75rem; }
+  .progress-label{
+    text-align:center;
+    font-size:12px;
+    color:var(--text-secondary);
+    letter-spacing:0.06em;
+    margin-bottom:1.5rem;
+  }
+  .card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:1.75rem 1.5rem;
+  }
+  .question{
+    font-family:'Noto Serif KR', serif;
+    font-size:19px;
+    font-weight:500;
+    line-height:1.5;
+    margin:0 0 0.5rem;
+  }
+  .hint{ font-size:13px; color:var(--text-secondary); margin:0 0 1.25rem; }
+  .options{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+  .options.cols-3{ grid-template-columns:1fr 1fr 1fr; }
+  .opt-btn{
+    background:transparent;
+    border:1px solid var(--border);
+    border-radius:12px;
+    color:var(--text-primary);
+    padding:1.4rem 0.6rem;
+    font-family:'Pretendard', sans-serif;
+    font-size:14px;
+    font-weight:500;
+    cursor:pointer;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+    transition:border-color 0.2s, background 0.2s;
+    text-align:center;
+    line-height:1.3;
+  }
+  .opt-btn:hover{ background:var(--surface-hover); border-color:var(--gold); }
+  .opt-btn:active{ transform:scale(0.98); }
+  .opt-icon{ font-size:22px; }
+  .back-link{
+    display:inline-block;
+    font-size:12.5px;
+    color:var(--text-secondary);
+    margin-bottom:1rem;
+    cursor:pointer;
+    text-decoration:underline;
+    text-underline-offset:2px;
+  }
+  .primary-btn{
+    width:100%;
+    background:var(--gold);
+    border:none;
+    border-radius:10px;
+    color:#1F1219;
+    font-family:'Pretendard', sans-serif;
+    font-size:15px;
+    font-weight:700;
+    padding:0.9rem 0;
+    cursor:pointer;
+  }
+  .ghost-btn{
+    width:100%;
+    background:transparent;
+    border:1px solid var(--border);
+    border-radius:10px;
+    color:var(--text-secondary);
+    font-family:'Pretendard', sans-serif;
+    font-size:13.5px;
+    padding:0.8rem 0;
+    margin-top:8px;
+    cursor:pointer;
+  }
+  .taste-tag{
+    font-size:12.5px;
+    color:var(--text-secondary);
+    text-align:center;
+    margin:0 0 1.25rem;
+    letter-spacing:0.02em;
+  }
+  .wine-card{
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:1.1rem 1.25rem;
+    margin-bottom:10px;
+    display:flex;
+    gap:12px;
+  }
+  .wine-thumb{
+    width:68px;
+    height:68px;
+    border-radius:12px;
+    object-fit:cover;
+    background:var(--surface);
+    flex-shrink:0;
+  }
+  .wine-thumb-placeholder{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:26px;
+  }
+  .quote-block{
+    margin-top:1.75rem;
+    padding-top:1.25rem;
+    border-top:1px solid var(--border);
+    text-align:center;
+  }
+  .quote-text{
+    font-family:'Noto Serif KR', serif;
+    font-style:italic;
+    font-size:13.5px;
+    line-height:1.6;
+    color:var(--text-secondary);
+    margin:0 0 8px;
+  }
+  .quote-sign{
+    font-size:11.5px;
+    color:var(--text-secondary);
+    opacity:0.7;
+    letter-spacing:0.04em;
+    margin:0;
+  }
+  .wine-name{
+    font-family:'Noto Serif KR', serif;
+    font-size:16px;
+    font-weight:500;
+    margin:0 0 5px;
+  }
+  .wine-desc{ font-size:13px; color:var(--text-secondary); margin:0 0 8px; }
+  .wine-price{ font-size:13px; color:var(--gold); margin:0; }
+  .cta{
+    display:block;
+    text-align:center;
+    text-decoration:none;
+    width:100%;
+    background:var(--gold);
+    border-radius:10px;
+    color:#1F1219;
+    font-size:15px;
+    font-weight:700;
+    padding:0.9rem 0;
+    margin-top:1.25rem;
+  }
+  .fallback-note{
+    font-size:12px;
+    color:var(--text-secondary);
+    text-align:center;
+    margin:0 0 10px;
+  }
+  .step{ display:none; }
+  .step.active{ display:block; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="brand">
+    <p class="brand-mark">와인창고</p>
+    <p class="brand-tag">오늘, 당신의 잔에 어울리는 와인</p>
+  </div>
+
+  <div class="glass-wrap">
+    <svg width="90" height="140" viewBox="0 0 100 140">
+      <defs>
+        <clipPath id="bowlClip">
+          <path d="M20,15 C20,55 35,75 50,90 C65,75 80,55 80,15 Z"/>
+        </clipPath>
+      </defs>
+      <rect id="liquid" x="15" y="90" width="70" height="0" fill="var(--gold)" clip-path="url(#bowlClip)" style="transition:y 0.6s ease, height 0.6s ease, fill 0.6s ease;"/>
+      <path d="M20,15 C20,55 35,75 50,90 C65,75 80,55 80,15 Z" fill="none" stroke="var(--text-secondary)" stroke-width="1.5"/>
+      <line x1="50" y1="90" x2="50" y2="125" stroke="var(--text-secondary)" stroke-width="1.5"/>
+      <ellipse cx="50" cy="130" rx="18" ry="4" fill="none" stroke="var(--text-secondary)" stroke-width="1.5"/>
+    </svg>
+  </div>
+
+  <p class="progress-label" id="progressLabel">1 / 5</p>
+
+  <div class="card">
+
+    <div class="step active" id="step-food">
+      <p class="question">어떤 음식과 함께<br>드실 예정인가요?</p>
+      <p class="hint">오늘의 메뉴에 가장 가까운 걸 골라주세요.</p>
+      <div class="options" id="foodOptions"></div>
+    </div>
+
+    <div class="step" id="step-foodSub">
+      <span class="back-link" onclick="goBack('food')">← 다시 고르기</span>
+      <p class="question" id="foodSubQuestion">세부 종류를 골라주세요</p>
+      <div class="options" id="foodSubOptions"></div>
+    </div>
+
+    <div class="step" id="step-type">
+      <p class="question">레드, 화이트, 스파클링<br>어떤 걸 선호하세요?</p>
+      <div class="options cols-3" id="typeOptions"></div>
+    </div>
+
+    <div class="step" id="step-body">
+      <p class="question">입 안에서 느껴지는<br>무게감은 어느 정도가 좋으세요?</p>
+      <div class="options cols-3" id="bodyOptions"></div>
+    </div>
+
+    <div class="step" id="step-sweet">
+      <p class="question">산미와 당도는<br>어느 쪽이 편하세요?</p>
+      <div class="options cols-3" id="sweetOptions"></div>
+    </div>
+
+    <div class="step" id="step-result">
+      <p class="question" style="text-align:center;">당신을 위한 추천 와인</p>
+      <p class="taste-tag" id="tasteTag"></p>
+      <p class="fallback-note" id="fallbackNote" style="display:none;"></p>
+      <div id="resultList"></div>
+      <button class="ghost-btn" onclick="restart()">처음부터 다시 선택하기</button>
+      <div class="quote-block">
+        <p class="quote-text" id="quoteText"></p>
+        <p class="quote-sign">— 제주 와인창고 올림 —</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ---------- 옵션 정의 ---------- */
+const FOOD_CATEGORIES = [
+  {id:'meat', label:'육류', icon:'🥩', sub:[
+    {id:'pork', label:'돼지고기', icon:'🐷'}, {id:'beef', label:'소고기', icon:'🐄'}, {id:'lamb', label:'양고기', icon:'🐑'}
+  ]},
+  {id:'seafood', label:'해산물', icon:'🐟', sub:[
+    {id:'redfish', label:'붉은살 생선', icon:'🐟'}, {id:'whitefish', label:'흰살 생선', icon:'🐡'}, {id:'shellfish', label:'조개류', icon:'🦪'}
+  ]},
+  {id:'fried', label:'튀김류', icon:'🍤'},
+  {id:'spicy', label:'매콤한 음식', icon:'🌶️'},
+  {id:'dessert', label:'디저트류', icon:'🍰'},
+  {id:'afterdinner', label:'식후 (스낵·올리브·치즈)', icon:'🧀'}
+];
+
+const TYPE_OPTIONS = [
+  {id:'red', label:'레드', icon:'🍷', color:'var(--red-wine)'},
+  {id:'white', label:'화이트', icon:'🥂', color:'var(--white-wine)'},
+  {id:'sparkling', label:'스파클링', icon:'🍾', color:'var(--sparkling-wine)'}
+];
+
+const BODY_OPTIONS = [
+  {id:'light', label:'라이트', icon:'🪶'},
+  {id:'medium', label:'미디엄', icon:'⚖️'},
+  {id:'full', label:'풀바디', icon:'🍇'}
+];
+
+const SWEET_OPTIONS = [
+  {id:'dry', label:'드라이', icon:'🍋'},
+  {id:'medium', label:'미디엄', icon:'🍯'},
+  {id:'sweet', label:'스위트', icon:'🍬'}
+];
+
+/* ---------- 샘플 와인 데이터 (Phase 2에서 관리자 화면 + 공유 저장소로 대체 예정) ---------- */
+const WINES = [
+  {name:'칠레 마이포밸리 카베르네 소비뇽', desc:'묵직한 타닌, 블랙베리 향', price:'3만원대', type:'red', body:'full', sweetness:'dry', foodTags:['beef','lamb']},
+  {name:'아르헨티나 말벡 리제르바', desc:'스모키하고 풀바디', price:'4만원대', type:'red', body:'full', sweetness:'dry', foodTags:['beef','lamb','afterdinner']},
+  {name:'프랑스 부르고뉴 피노누아', desc:'붉은 과일 향, 가벼운 타닌', price:'5만원대', type:'red', body:'light', sweetness:'dry', foodTags:['pork','fried']},
+  {name:'보졸레 가메', desc:'상큼한 산미, 라이트바디', price:'3만원대', type:'red', body:'light', sweetness:'medium', foodTags:['pork','spicy']},
+  {name:'스페인 가르나차 조벤', desc:'과실향 풍부, 부드러운 목넘김', price:'3만원대', type:'red', body:'medium', sweetness:'medium', foodTags:['pork','beef']},
+  {name:'캘리포니아 샤르도네 오크숙성', desc:'버터 향, 묵직한 바디', price:'4만원대', type:'white', body:'full', sweetness:'dry', foodTags:['whitefish','shellfish']},
+  {name:'론 비오니에', desc:'복숭아 향, 진한 질감', price:'4만원대', type:'white', body:'full', sweetness:'medium', foodTags:['fried','afterdinner']},
+  {name:'독일 리슬링 카비넷', desc:'상큼한 산미, 라이트바디', price:'3만원대', type:'white', body:'light', sweetness:'sweet', foodTags:['spicy','redfish']},
+  {name:'뉴질랜드 소비뇽 블랑', desc:'라임 향, 드라이한 여운', price:'3만원대', type:'white', body:'light', sweetness:'dry', foodTags:['whitefish','shellfish']},
+  {name:'이탈리아 피노그리지오', desc:'깔끔하고 청량한 맛', price:'3만원대', type:'white', body:'medium', sweetness:'dry', foodTags:['redfish','afterdinner']},
+  {name:'프로세코 브뤼', desc:'상큼한 기포, 가벼운 여운', price:'3만원대', type:'sparkling', body:'light', sweetness:'dry', foodTags:['fried','afterdinner']},
+  {name:'까바 로제 세미섹', desc:'베리 향, 은은한 단맛', price:'3만원대', type:'sparkling', body:'medium', sweetness:'sweet', foodTags:['dessert']},
+  {name:'모스카토 다스티', desc:'꽃향과 달콤함, 낮은 도수', price:'2만원대', type:'sparkling', body:'light', sweetness:'sweet', foodTags:['dessert']}
+];
+
+const QUOTES = [
+  '와인은 정답이 없어요. 오늘 마음이 정답입니다.',
+  '오늘 고른 이 한 병이, 누군가에겐 완벽한 타이밍일 거예요.',
+  '완벽한 와인보다, 지금 이 순간에 어울리는 와인을 찾았어요.',
+  '아는 만큼 보이는 게 아니라, 좋아하는 만큼 맛있는 거예요.',
+  '가끔은 이유 없이, 그냥 끌리는 한 잔이 정답일 때가 있어요.'
+];
+
+/* ---------- 상태 & 흐름 제어 ---------- */
+const state = { food:null, foodSub:null, foodTag:null, type:null, body:null, sweetness:null };
+let flowSteps = ['food','type','body','sweet','result'];
+let stepIndex = 0;
+
+function renderOptions(containerId, items, key, extra){
+  const el = document.getElementById(containerId);
+  el.innerHTML = '';
+  items.forEach(item=>{
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.innerHTML = '<span class="opt-icon">'+(item.icon||'')+'</span>'+item.label.replace('\n','<br>');
+    btn.onclick = ()=> choose(key, item, extra);
+    el.appendChild(btn);
+  });
+}
+
+renderOptions('foodOptions', FOOD_CATEGORIES, 'food');
+renderOptions('typeOptions', TYPE_OPTIONS, 'type');
+renderOptions('bodyOptions', BODY_OPTIONS, 'body');
+renderOptions('sweetOptions', SWEET_OPTIONS, 'sweetness');
+
+const BOWL_TOP = 15, BOWL_BOTTOM = 90, BOWL_HEIGHT = 75;
+function setGlass(percent, color){
+  const liquid = document.getElementById('liquid');
+  const h = (percent/100) * BOWL_HEIGHT;
+  liquid.setAttribute('y', BOWL_BOTTOM - h);
+  liquid.setAttribute('height', h + 10);
+  if(color) liquid.setAttribute('fill', color);
+}
+
+function showStep(id){
+  document.querySelectorAll('.step').forEach(s=> s.classList.remove('active'));
+  document.getElementById('step-'+id).classList.add('active');
+}
+
+function updateProgress(){
+  const total = flowSteps.length; // 'result' 포함하지 않고 카운트
+  const shown = Math.min(stepIndex+1, total-1);
+  document.getElementById('progressLabel').textContent = shown + ' / ' + (total-1);
+  setGlass((shown/(total-1))*100, state.type ? TYPE_OPTIONS.find(t=>t.id===state.type).color : 'var(--gold)');
+}
+
+function goTo(stepName){
+  stepIndex = flowSteps.indexOf(stepName);
+  showStep(stepName);
+  if(stepName !== 'result') updateProgress();
+}
+
+function choose(key, item){
+  if(key === 'food'){
+    state.food = item.id;
+    if(item.sub){
+      document.getElementById('foodSubQuestion').textContent = item.label + ' 중 어떤 걸로 하시겠어요?';
+      renderOptions('foodSubOptions', item.sub, 'foodSub');
+      flowSteps = ['food','foodSub','type','body','sweet','result'];
+      goTo('foodSub');
+    } else {
+      state.foodTag = item.id;
+      flowSteps = ['food','type','body','sweet','result'];
+      goTo('type');
+    }
+  } else if(key === 'foodSub'){
+    state.foodSub = item.id;
+    state.foodTag = item.id;
+    goTo('type');
+  } else if(key === 'type'){
+    state.type = item.id;
+    goTo('body');
+  } else if(key === 'body'){
+    state.body = item.id;
+    goTo('sweet');
+  } else if(key === 'sweetness'){
+    state.sweetness = item.id;
+    showResult();
+  }
+}
+
+function goBack(stepName){
+  goTo(stepName);
+}
+
+/* ---------- 매칭 로직: 정확히 맞는 조합이 부족하면 조건을 단계적으로 완화 ---------- */
+function findMatches(){
+  let pool, note = '';
+  pool = WINES.filter(w=> w.type===state.type && w.body===state.body && w.sweetness===state.sweetness && w.foodTags.includes(state.foodTag));
+  if(pool.length < 3){
+    pool = WINES.filter(w=> w.type===state.type && w.body===state.body && w.sweetness===state.sweetness);
+    note = '음식 페어링까지 완전히 일치하는 와인은 부족해서, 취향(타입·바디감·산도)이 맞는 와인으로 채웠어요.';
+  }
+  if(pool.length < 3){
+    pool = WINES.filter(w=> w.type===state.type && w.body===state.body);
+    note = '조건에 딱 맞는 와인이 적어서, 타입과 바디감 위주로 채웠어요.';
+  }
+  if(pool.length < 3){
+    pool = WINES.filter(w=> w.type===state.type);
+    note = '조건에 딱 맞는 와인이 적어서, 타입 위주로 채웠어요.';
+  }
+  return {wines: pool.slice(0,3), note};
+}
+
+function showResult(){
+  const typeLabel = TYPE_OPTIONS.find(t=>t.id===state.type).label;
+  const bodyLabel = BODY_OPTIONS.find(b=>b.id===state.body).label;
+  const sweetLabel = SWEET_OPTIONS.find(s=>s.id===state.sweetness).label.replace('\n',' ');
+  document.getElementById('tasteTag').textContent = typeLabel + ' · ' + bodyLabel + ' · ' + sweetLabel;
+
+  const {wines, note} = findMatches();
+  const noteEl = document.getElementById('fallbackNote');
+  if(note){ noteEl.textContent = note; noteEl.style.display = 'block'; }
+  else { noteEl.style.display = 'none'; }
+
+  const list = document.getElementById('resultList');
+  list.innerHTML = '';
+  if(wines.length === 0){
+    list.innerHTML = '<p class="hint" style="text-align:center;">아직 등록된 와인이 부족해요. 직원에게 문의해주세요!</p>';
+  }
+  wines.forEach(w=>{
+    const card = document.createElement('div');
+    card.className = 'wine-card';
+    card.innerHTML =
+      (w.image
+        ? '<img class="wine-thumb" src="'+w.image+'" alt="">'
+        : '<div class="wine-thumb wine-thumb-placeholder">🍷</div>') +
+      '<div><p class="wine-name">'+w.name+'</p>' +
+      '<p class="wine-desc">'+w.desc+'</p>' +
+      '<p class="wine-price">'+w.price+'</p></div>';
+    list.appendChild(card);
+  });
+
+  document.getElementById('quoteText').textContent = QUOTES[Math.floor(Math.random()*QUOTES.length)];
+  document.getElementById('progressLabel').textContent = '완료';
+  showStep('result');
+}
+
+function restart(){
+  state.food=null; state.foodSub=null; state.foodTag=null; state.type=null; state.body=null; state.sweetness=null;
+  flowSteps = ['food','type','body','sweet','result'];
+  stepIndex = 0;
+  setGlass(0);
+  updateProgress();
+  showStep('food');
+}
+
+updateProgress();
+</script>
+</body>
+</html>
