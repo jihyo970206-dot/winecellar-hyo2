@@ -289,7 +289,9 @@ const FOOD_CATEGORIES = [
   {id:'fried', label:'튀김류', icon:'🍤'},
   {id:'spicy', label:'매콤한 음식', icon:'🌶️'},
   {id:'dessert', label:'디저트류', icon:'🍰'},
-  {id:'afterdinner', label:'식후 (스낵·올리브·치즈)', icon:'🧀'}
+  {id:'afterdinner', label:'Deli 델리\n(치즈, 올리브, 크래커, 사퀴테리)', icon:'🧀', sub:[
+    {id:'cheese', label:'치즈', icon:'🧀'}, {id:'olive', label:'올리브', icon:'🫒'}, {id:'cracker', label:'크래커', icon:'🍘'}, {id:'charcuterie', label:'사퀴테리', icon:'🥓'}, {id:'nuts', label:'견과류', icon:'🥜'}
+  ]}
 ];
 
 const TYPE_OPTIONS = [
@@ -313,16 +315,16 @@ const SWEET_OPTIONS = [
 /* ---------- 샘플 와인 데이터 (Phase 2에서 관리자 화면 + 공유 저장소로 대체 예정) ---------- */
 const WINES = [
   {name:'칠레 마이포밸리 카베르네 소비뇽', desc:'묵직한 타닌, 블랙베리 향', price:'3만원대', type:'red', body:'full', sweetness:'dry', foodTags:['beef','lamb']},
-  {name:'아르헨티나 말벡 리제르바', desc:'스모키하고 풀바디', price:'4만원대', type:'red', body:'full', sweetness:'dry', foodTags:['beef','lamb','afterdinner']},
+  {name:'아르헨티나 말벡 리제르바', desc:'스모키하고 풀바디', price:'4만원대', type:'red', body:'full', sweetness:'dry', foodTags:['beef','lamb','charcuterie']},
   {name:'프랑스 부르고뉴 피노누아', desc:'붉은 과일 향, 가벼운 타닌', price:'5만원대', type:'red', body:'light', sweetness:'dry', foodTags:['pork','fried']},
   {name:'보졸레 가메', desc:'상큼한 산미, 라이트바디', price:'3만원대', type:'red', body:'light', sweetness:'medium', foodTags:['pork','spicy']},
   {name:'스페인 가르나차 조벤', desc:'과실향 풍부, 부드러운 목넘김', price:'3만원대', type:'red', body:'medium', sweetness:'medium', foodTags:['pork','beef']},
   {name:'캘리포니아 샤르도네 오크숙성', desc:'버터 향, 묵직한 바디', price:'4만원대', type:'white', body:'full', sweetness:'dry', foodTags:['whitefish','shellfish']},
-  {name:'론 비오니에', desc:'복숭아 향, 진한 질감', price:'4만원대', type:'white', body:'full', sweetness:'medium', foodTags:['fried','afterdinner']},
+  {name:'론 비오니에', desc:'복숭아 향, 진한 질감', price:'4만원대', type:'white', body:'full', sweetness:'medium', foodTags:['fried','cheese']},
   {name:'독일 리슬링 카비넷', desc:'상큼한 산미, 라이트바디', price:'3만원대', type:'white', body:'light', sweetness:'sweet', foodTags:['spicy','redfish']},
   {name:'뉴질랜드 소비뇽 블랑', desc:'라임 향, 드라이한 여운', price:'3만원대', type:'white', body:'light', sweetness:'dry', foodTags:['whitefish','shellfish']},
-  {name:'이탈리아 피노그리지오', desc:'깔끔하고 청량한 맛', price:'3만원대', type:'white', body:'medium', sweetness:'dry', foodTags:['redfish','afterdinner']},
-  {name:'프로세코 브뤼', desc:'상큼한 기포, 가벼운 여운', price:'3만원대', type:'sparkling', body:'light', sweetness:'dry', foodTags:['fried','afterdinner']},
+  {name:'이탈리아 피노그리지오', desc:'깔끔하고 청량한 맛', price:'3만원대', type:'white', body:'medium', sweetness:'dry', foodTags:['redfish','nuts']},
+  {name:'프로세코 브뤼', desc:'상큼한 기포, 가벼운 여운', price:'3만원대', type:'sparkling', body:'light', sweetness:'dry', foodTags:['fried','olive']},
   {name:'까바 로제 세미섹', desc:'베리 향, 은은한 단맛', price:'3만원대', type:'sparkling', body:'medium', sweetness:'sweet', foodTags:['dessert']},
   {name:'모스카토 다스티', desc:'꽃향과 달콤함, 낮은 도수', price:'2만원대', type:'sparkling', body:'light', sweetness:'sweet', foodTags:['dessert']}
 ];
@@ -388,7 +390,7 @@ function choose(key, item){
   if(key === 'food'){
     state.food = item.id;
     if(item.sub){
-      document.getElementById('foodSubQuestion').textContent = item.label + ' 중 어떤 걸로 하시겠어요?';
+      document.getElementById('foodSubQuestion').textContent = item.label.split('\n')[0] + ' 중 어떤 걸로 하시겠어요?';
       renderOptions('foodSubOptions', item.sub, 'foodSub');
       flowSteps = ['food','foodSub','type','body','sweet','result'];
       goTo('foodSub');
