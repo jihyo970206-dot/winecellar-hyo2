@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>와인창고 | 오늘의 취향 와인 찾기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  :root{
+    --bg:#F7F5F0;
+    --surface:#FFFFFF;
+    --surface-soft:#F9F7F2;
+    --text-primary:#171515;
+    --text-secondary:#8A857E;
+    --accent:#6B2633;
+    --accent-soft:#F3E9E9;
+    --purple:#4F1D63;
+    --border: rgba(23,21,21,0.10);
+    --serif: 'Cormorant Garamond', 'Times New Roman', serif;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text-primary);
+    font-family:'Pretendard','Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    letter-spacing:-0.01em;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+  }
+  .page{
+    width:100%;
+    max-width:430px;
+    padding:3.5rem 1.5rem 3.5rem;
+  }
+  .brand{ text-align:center; margin-bottom:2.5rem; }
+  .brand-mark{
+    font-weight:700;
+    font-size:18px;
+    letter-spacing:-0.01em;
+    margin:0;
+    color:var(--text-primary);
+  }
+  .brand-eyebrow{
+    font-family:var(--serif);
+    font-style:italic;
+    font-weight:600;
+    font-size:12px;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    color:var(--accent);
+    margin:6px 0 0;
+  }
+  .brand-tag{ font-size:13px; font-weight:500; color:var(--text-secondary); margin:10px 0 0; }
+  .glass-wrap{ display:flex; justify-content:center; margin:0.25rem 0 2.25rem; }
+  .progress-track{
+    width:100%;
+    max-width:180px;
+    height:2px;
+    background:rgba(23,21,21,0.08);
+    border-radius:999px;
+    margin:0 auto 9px;
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    width:0%;
+    background:var(--accent);
+    border-radius:999px;
+    transition:width 0.45s cubic-bezier(.4,0,.2,1);
+  }
+  .progress-label{
+    text-align:center;
+    font-size:10.5px;
+    font-weight:600;
+    color:var(--text-secondary);
+    letter-spacing:0.14em;
+    margin:0 0 2rem;
+  }
+  .card{
+    background:transparent;
+    border:none;
+    border-radius:0;
+    padding:0.5rem 0.1rem;
+    box-shadow:none;
+  }
+  .question{
+    font-size:22px;
+    font-weight:700;
+    letter-spacing:-0.02em;
+    line-height:1.45;
+    margin:0 0 0.6rem;
+    color:var(--text-primary);
+  }
+  .hint{ font-size:13px; font-weight:500; color:var(--text-secondary); margin:0 0 1.75rem; }
+  .options{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+  .options.cols-3{ grid-template-columns:1fr 1fr 1fr; gap:8px; }
+  .opt-btn{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:12px;
+    color:var(--text-primary);
+    padding:1.2rem 0.6rem;
+    font-family:'Pretendard', sans-serif;
+    font-size:13.5px;
+    font-weight:600;
+    cursor:pointer;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:7px;
+    transition:border-color 0.2s ease, background 0.2s ease;
+    text-align:center;
+    line-height:1.3;
+  }
+  .opt-btn:hover{ border-color:rgba(23,21,21,0.22); }
+  .opt-btn:active{ background:var(--accent-soft); }
+  .opt-icon{ font-size:19px; opacity:0.85; }
+  .opt-desc{
+    font-size:10.5px;
+    font-weight:500;
+    color:var(--text-secondary);
+    line-height:1.4;
+    margin-top:1px;
+  }
+  .opt-badge{
+    display:inline-block;
+    font-family:'Pretendard', sans-serif;
+    background:transparent;
+    color:var(--accent);
+    font-size:10px;
+    font-weight:600;
+    letter-spacing:0.05em;
+    padding:0;
+    margin-top:1px;
+  }
+  .back-link{
+    display:inline-block;
+    font-size:12px;
+    font-weight:500;
+    color:var(--text-secondary);
+    margin-bottom:1.1rem;
+    cursor:pointer;
+    transition:color 0.2s ease;
+  }
+  .back-link:hover{ color:var(--text-primary); }
+  .ghost-btn{
+    width:100%;
+    background:transparent;
+    border:1px solid var(--border);
+    border-radius:12px;
+    color:var(--text-secondary);
+    font-family:'Pretendard', sans-serif;
+    font-size:13px;
+    font-weight:600;
+    padding:0.85rem 0;
+    margin-top:8px;
+    cursor:pointer;
+    transition:border-color 0.2s ease, color 0.2s ease;
+  }
+  .ghost-btn:hover{ border-color:rgba(23,21,21,0.25); color:var(--text-primary); }
+  .choice-chips{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:6px;
+    margin:0 0 1.75rem;
+  }
+  .chip{
+    background:var(--surface-soft);
+    color:var(--text-secondary);
+    font-size:11px;
+    font-weight:600;
+    padding:5px 11px;
+    border:1px solid var(--border);
+    border-radius:999px;
+    white-space:nowrap;
+  }
+  .reco-by{ text-align:center; margin:0 0 1.75rem; }
+  .reco-kicker{
+    font-family:var(--serif);
+    font-weight:600;
+    font-size:19px;
+    letter-spacing:0.04em;
+    color:var(--text-primary);
+    margin:0;
+  }
+  .reco-label{ font-size:12px; font-weight:500; color:var(--text-secondary); margin:5px 0 0; }
+  .wine-card{
+    position:relative;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:1.1rem;
+    margin-bottom:12px;
+  }
+  .wine-image-wrap{
+    position:relative;
+    width:100%;
+    height:170px;
+    border-radius:10px;
+    background:var(--surface-soft);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    margin-bottom:0.9rem;
+  }
+  .wine-card.featured .wine-image-wrap{ height:290px; }
+  .wine-image{
+    max-width:78%;
+    max-height:88%;
+    object-fit:contain;
+  }
+  .wine-image-placeholder{ font-size:26px; opacity:0.35; }
+  .wine-name{ font-size:15.5px; font-weight:700; letter-spacing:-0.01em; margin:0 0 4px; color:var(--text-primary); }
+  .wine-card.featured .wine-name{ font-size:18px; }
+  .wine-desc{ font-size:12.5px; font-weight:500; color:var(--text-secondary); margin:0; line-height:1.5; }
+  .quote-block{
+    margin-top:2.25rem;
+    padding-top:1.5rem;
+    border-top:1px solid var(--border);
+    text-align:center;
+  }
+  .quote-text{
+    font-family:'Pretendard', sans-serif;
+    font-size:14px;
+    font-weight:500;
+    line-height:1.6;
+    color:var(--text-primary);
+    margin:0 0 8px;
+  }
+  .quote-sign{
+    font-size:10.5px;
+    font-weight:500;
+    color:var(--text-secondary);
+    opacity:0.8;
+    letter-spacing:0.06em;
+    margin:0;
+  }
+  .fallback-note{
+    font-size:11.5px;
+    font-weight:500;
+    color:var(--text-secondary);
+    text-align:center;
+    margin:0 0 12px;
+  }
+  .why-label{
+    display:block;
+    font-family:'Pretendard', sans-serif;
+    font-weight:700;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--accent);
+    margin:0 0 7px;
+  }
+  .why-note{
+    background:transparent;
+    border:none;
+    border-left:1.5px solid var(--accent);
+    border-radius:0;
+    padding:0.15rem 0 0.15rem 1rem;
+    font-size:12.5px;
+    font-weight:500;
+    line-height:1.7;
+    color:var(--text-secondary);
+    margin:18px 0 4px;
+  }
+  .why-note b{ color:var(--text-primary); font-weight:600; }
+  .fortified-eyebrow{
+    display:block;
+    text-align:center;
+    font-family:'Pretendard', sans-serif;
+    font-weight:700;
+    font-size:13px;
+    letter-spacing:0.12em;
+    color:var(--accent);
+    margin:0 0 16px;
+  }
+  .detail-btn{
+    width:100%;
+    background:var(--accent);
+    color:#FFFFFF;
+    border:none;
+    border-radius:11px;
+    font-family:'Pretendard', sans-serif;
+    font-size:14.5px;
+    font-weight:700;
+    height:51px;
+    margin-top:10px;
+    cursor:pointer;
+    transition:opacity 0.2s ease;
+  }
+  .detail-btn:hover{ opacity:0.9; }
+
+  /* ---------- 옵션 버튼: 영문 eyebrow / 2단 설명(바디감) ---------- */
+  .opt-eyebrow{
+    font-family:'Pretendard', sans-serif;
+    font-weight:700;
+    font-size:9.5px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--accent);
+    margin-bottom:1px;
+  }
+  .opt-desc2{
+    font-size:9.5px;
+    font-weight:400;
+    color:var(--text-secondary);
+    opacity:0.78;
+    line-height:1.3;
+    margin-top:0;
+  }
+
+  /* ---------- 인트로 화면 ---------- */
+  #persistentHeader{ display:block; }
+
+  /* ---------- 결과 화면 상단 헤더 ---------- */
+  .result-eyebrow{
+    display:block; text-align:center; font-family:var(--serif); font-style:italic;
+    font-weight:600; font-size:13px; letter-spacing:0.18em; text-transform:uppercase;
+    color:var(--accent); margin:0 0 8px;
+  }
+  .result-title{
+    text-align:center; font-size:23px; font-weight:700; letter-spacing:-0.02em;
+    line-height:1.4; color:var(--text-primary); margin:0 0 8px;
+  }
+  .result-sub{ text-align:center; font-size:13px; font-weight:500; color:var(--text-secondary); margin:0 0 1.75rem; }
+
+  /* ---------- 결과 카드: 이미지 위 가격 배지 / 위시 아이콘 ---------- */
+  .wine-meta{
+    font-size:11.5px; font-weight:600; color:var(--accent);
+    margin:0 0 5px; letter-spacing:0.01em;
+  }
+  .wine-price{
+    font-size:11px; font-weight:600; color:var(--text-secondary);
+    margin:8px 0 0;
+  }
+  .step{ display:none; }
+  .step.active{ display:block; animation:fadeIn 0.35s ease; }
+  @keyframes fadeIn{ from{ opacity:0; transform:translateY(6px); } to{ opacity:1; transform:translateY(0); } }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div id="persistentHeader">
+  <div class="brand">
+    <p class="brand-mark">와인창고</p>
+    <p class="brand-eyebrow">Wine Select</p>
+    <p class="brand-tag">오늘, 당신과 어울리는 와인</p>
+  </div>
+
+  <div class="glass-wrap">
+    <svg width="76" height="122" viewBox="0 0 100 140">
+      <defs>
+        <clipPath id="bowlClip">
+          <path d="M20,15 C20,55 35,75 50,90 C65,75 80,55 80,15 Z"/>
+        </clipPath>
+        <linearGradient id="liquidGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop id="liquidStopTop" offset="0%" stop-color="#6B2633" stop-opacity="0.82"/>
+          <stop id="liquidStopBottom" offset="100%" stop-color="#6B2633" stop-opacity="1"/>
+        </linearGradient>
+      </defs>
+      <rect id="liquid" x="15" y="90" width="70" height="0" fill="url(#liquidGrad)" clip-path="url(#bowlClip)" style="transition:y 0.9s cubic-bezier(.22,1,.36,1), height 0.9s cubic-bezier(.22,1,.36,1);"/>
+      <ellipse id="liquidSurface" cx="50" cy="90" rx="0" ry="2.6" fill="#FFFFFF" opacity="0.35" clip-path="url(#bowlClip)" style="transition:cy 0.9s cubic-bezier(.22,1,.36,1), rx 0.9s cubic-bezier(.22,1,.36,1);"/>
+      <path d="M20,15 C20,55 35,75 50,90 C65,75 80,55 80,15 Z" fill="none" stroke="rgba(23,21,21,0.22)" stroke-width="0.9"/>
+      <line x1="50" y1="90" x2="50" y2="125" stroke="rgba(23,21,21,0.22)" stroke-width="0.9"/>
+      <ellipse cx="50" cy="130" rx="16" ry="3.2" fill="none" stroke="rgba(23,21,21,0.22)" stroke-width="0.9"/>
+    </svg>
+  </div>
+
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  <p class="progress-label" id="progressLabel">01 / 05</p>
+  </div>
+
+  <div class="card">
+
+    <div class="step active" id="step-food">
+      <p class="question">어떤 음식과 함께<br>드실 예정인가요?</p>
+      <p class="hint">오늘의 메뉴에 가장 가까운 걸 골라주세요.</p>
+      <div class="options" id="foodOptions"></div>
+    </div>
+
+    <div class="step" id="step-foodSub">
+      <span class="back-link" onclick="goBack()">← 다시 고르기</span>
+      <p class="question" id="foodSubQuestion">세부 종류를 골라주세요</p>
+      <div class="options" id="foodSubOptions"></div>
+    </div>
+
+    <div class="step" id="step-foodSubSub">
+      <span class="back-link" onclick="goBack()">← 다시 고르기</span>
+      <p class="question" id="foodSubSubQuestion">세부 종류를 골라주세요</p>
+      <div class="options" id="foodSubSubOptions"></div>
+    </div>
+
+    <div class="step" id="step-type">
+      <span class="back-link" id="typeBackLink" onclick="goBack()">← 다시 고르기</span>
+      <p class="question" id="typeQuestion">어떤 타입을 선호하세요?</p>
+      <div class="options cols-3" id="typeOptions"></div>
+    </div>
+
+    <div class="step" id="step-quick">
+      <span class="back-link" onclick="goBack()">← 다시 고르기</span>
+      <p class="question" style="text-align:center;">이런 와인은 어떠세요?</p>
+      <p class="hint" style="text-align:center;">오늘의 취향에 맞춰 먼저 골라봤어요.</p>
+      <div class="choice-chips" id="quickChips"></div>
+      <p class="fallback-note" id="quickFallbackNote" style="display:none;"></p>
+      <div id="quickResultList"></div>
+      <div class="why-note" id="quickWhyNote" style="display:none;"></div>
+      <button class="detail-btn" onclick="goToDetailFlow()">내 취향으로 더 골라보기</button>
+      <button class="ghost-btn" onclick="restart()">처음부터 다시 선택하기</button>
+    </div>
+
+    <div class="step" id="step-sweet">
+      <span class="back-link" onclick="goBack()">← 다시 고르기</span>
+      <p class="question">당도(단맛)는<br>어느 쪽이 편하세요?</p>
+      <div class="options cols-3" id="sweetOptions"></div>
+    </div>
+
+    <div class="step" id="step-fortified">
+      <span class="fortified-eyebrow">Fortified Wine</span>
+      <p class="question" style="text-align:center;">잠깐, 이건 주정강화 와인이에요</p>
+      <p class="why-label" style="text-align:center;">Why This Wine</p>
+      <div class="why-note" style="border-left:none; padding-left:0; text-align:center;"><b>레드 와인 중에는 포트와인처럼 달콤한 주정강화 와인도 있어요.</b><br>포트는 발효 중 포도주정을 넣어 발효를 멈추기 때문에 포도의 당분이 일부 남아 달콤한 맛이 나며, 일반 와인보다 높은 약 19~22%의 알코올 도수를 가지고 있어요.<br>포트의 주정강화 방식은 장거리 해상 운송 중 와인의 보존성을 높이려는 역사적 배경과 함께 발전했어요.</div>
+      <button class="detail-btn" onclick="goTo('acid')">알겠어요, 계속할게요</button>
+    </div>
+
+    <div class="step" id="step-acid">
+      <span class="back-link" onclick="goBack()">← 다시 고르기</span>
+      <p class="question">산미(신맛)는<br>어느 정도가 좋으세요?</p>
+      <p class="hint">TIP · 산미는 와인의 새콤하고 상쾌한 느낌이에요.</p>
+      <div class="options cols-3" id="acidOptions"></div>
+    </div>
+
+    <div class="step" id="step-body">
+      <span class="back-link" onclick="goBack()">← 다시 고르기</span>
+      <p class="question">입 안에서 느껴지는<br>무게감은 어느 정도가 좋으세요?</p>
+      <p class="hint">바디감은 입안에서 느껴지는 와인의 무게감이에요.</p>
+      <div class="options cols-3" id="bodyOptions"></div>
+    </div>
+
+    <div class="step" id="step-result">
+      <p class="result-eyebrow">Wine Changgo</p>
+      <p class="result-title">당신을 위한<br>셀렉션</p>
+      <p class="result-sub">오늘, 당신과 어울리는 와인을 골랐어요.</p>
+      <div class="choice-chips" id="choiceChips"></div>
+      <p class="fallback-note" id="fallbackNote" style="display:none;"></p>
+      <div id="resultList"></div>
+      <div class="why-note" id="resultWhyNote" style="display:none;"></div>
+      <button class="ghost-btn" onclick="restart()">처음부터 다시 선택하기</button>
+      <div class="quote-block">
+        <p class="quote-text" id="quoteText"></p>
+        <p class="quote-sign">— 제주 와인창고 올림 —</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ---------- 옵션 정의 ---------- */
+const FOOD_CATEGORIES = [
+  {id:'meat', label:'육류', icon:'🥩', sub:[
+    {id:'pork', label:'돼지고기', icon:'🐷'}, {id:'beef', label:'소고기', icon:'🐄'}, {id:'lamb', label:'양고기', icon:'🐑'}
+  ]},
+  {id:'seafood', label:'해산물', icon:'🐟', sub:[
+    {id:'redfish', label:'붉은살 생선', icon:'🐟'}, {id:'whitefish', label:'흰살 생선', icon:'🐡'}, {id:'shellfish', label:'갑각 및 조개류', icon:'🦪'}
+  ]},
+  {id:'fried', label:'튀김류', icon:'🍤'},
+  {id:'spicy', label:'매콤한 음식', icon:'🌶️'},
+  {id:'dessert', label:'디저트류', icon:'🍰'},
+  {id:'afterdinner', label:'치즈', icon:'🧀', sub:[
+    {id:'cheese_mild', label:'단치즈\n(과일치즈 등)', icon:'🍯'}, {id:'cheese_salty', label:'짠치즈\n(까망베르 등)', icon:'🧂'}
+  ]}
+];
+
+const TYPE_OPTIONS = [
+  {id:'red', label:'레드', eyebrow:'Red', color:'#6B2633', desc:'진하고 풍부하게'},
+  {id:'white', label:'화이트', eyebrow:'White', color:'#E4D9B4', desc:'깔끔하고 상큼하게'},
+  {id:'rose', label:'로제', eyebrow:'Rosé', color:'#D9A9AC', desc:'가볍고 산뜻하게'},
+  {id:'sparkling', label:'스파클링', eyebrow:'Sparkling', color:'#E9DCA8', desc:'톡톡 튀고 청량하게'},
+  {id:'non_alcohol', label:'논알콜', eyebrow:'Non-Alcohol', color:'#9CAE8C', desc:'부담 없이 가볍게'}
+];
+
+const BODY_OPTIONS = [
+  {id:'light', label:'라이트', desc:'가볍고 산뜻한 느낌', desc2:'물처럼 가벼운 느낌'},
+  {id:'medium', label:'미디엄', desc:'적당히 풍성하고 균형 잡힌 느낌', desc2:'우유처럼 부드러운 느낌'},
+  {id:'full', label:'풀바디', desc:'진하고 묵직한 느낌', desc2:'크림처럼 입안을 꽉 채우는 느낌'}
+];
+
+const ACID_OPTIONS = [
+  {id:'low', label:'낮음', desc:'부드럽고 둥근 느낌'},
+  {id:'medium', label:'보통', desc:'적당히 상큼하고 균형 잡힌 느낌'},
+  {id:'high', label:'높음', desc:'새콤하고 생기 있는 느낌'}
+];
+
+const SWEET_OPTIONS = [
+  {id:'dry', label:'드라이', desc:'단맛이 거의 없는 깔끔한 느낌'},
+  {id:'medium', label:'미디엄', desc:'은은하게 달콤한 느낌'},
+  {id:'sweet', label:'스위트', desc:'달콤함이 뚜렷한 느낌'}
+];
+
+/* 순서가 타입→당도→산미→바디감으로 바뀌면서, 당도를 물어보는 시점엔 아직 바디감을 모르기 때문에
+   타입×바디감 조합별 제한(SWEET_MATRIX)은 더 이상 쓰지 않음. 당도는 항상 3개 다 보여주고,
+   실제 그 조합의 와인이 없으면 pickBestInPool의 단계적 완화 로직이 알아서 처리함. */
+
+/* 음식 카테고리별 타입 제한 — 소믈리에/전문가 근거가 있는 것만 반영 */
+const FOOD_TYPE_RESTRICTIONS = {
+  redfish:   ['red','white','sparkling','non_alcohol'],
+  whitefish: ['white','rose','sparkling','non_alcohol'],
+  shellfish: ['white','rose','sparkling','non_alcohol'],
+  spicy:     ['white','rose','sparkling','non_alcohol']
+};
+/* 튀김류는 더 이상 스파클링으로 고정하지 않음 - 전체 타입 선택 가능하되, 스파클링을 '추천' 배지로 우선 노출 */
+const FOOD_TYPE_PRIORITY = { fried: 'sparkling' };
+
+function getTypeOptionsForFood(foodTag){
+  const allowed = FOOD_TYPE_RESTRICTIONS[foodTag];
+  let list = allowed ? TYPE_OPTIONS.filter(t=> allowed.includes(t.id)) : TYPE_OPTIONS.slice();
+  const pref = FOOD_TYPE_PRIORITY[foodTag];
+  if(pref){
+    list = list.slice().sort((a,b)=> (a.id===pref?0:1) - (b.id===pref?0:1));
+    list = list.map(t=> t.id===pref ? Object.assign({}, t, {badge:'추천'}) : t);
+  }
+  return list;
+}
+
+/* 왜 특정 타입이 빠졌는지 — 실제 소믈리에·전문가 근거만 기재 (지어낸 이유 없음) */
+const TYPE_EXCLUSION_NOTES = {
+  redfish: '<b>생선·해산물에는 산뜻하고 깔끔한 화이트·스파클링 와인을 추천해요.</b><br>와인 속 철 이온은 생선과 함께 마셨을 때 비린 뒷맛을 강하게 느끼게 할 수 있어, 일반적으로 철분과 타닌이 상대적으로 적은 화이트·스파클링 와인이 잘 어울려요.',
+  whitefish: '<b>생선·해산물에는 산뜻하고 깔끔한 화이트·스파클링 와인을 추천해요.</b><br>와인 속 철 이온은 생선과 함께 마셨을 때 비린 뒷맛을 강하게 느끼게 할 수 있어, 일반적으로 철분과 타닌이 상대적으로 적은 화이트·스파클링 와인이 잘 어울려요.',
+  shellfish: '<b>생선·해산물에는 산뜻하고 깔끔한 화이트·스파클링 와인을 추천해요.</b><br>와인 속 철 이온은 생선과 함께 마셨을 때 비린 뒷맛을 강하게 느끼게 할 수 있어, 일반적으로 철분과 타닌이 상대적으로 적은 화이트·스파클링 와인이 잘 어울려요.',
+  spicy: '<b>매운 음식에는 알코올과 타닌이 강한 와인보다 부드럽고 산뜻한 와인을 추천해요.</b><br>캡사이신은 알코올과 만나면 화끈거림을 더 강하게 느끼게 할 수 있어, 저알코올·저타닌 와인이나 은은한 단맛이 있는 화이트·로제·스파클링 와인이 매운맛을 편안하게 잡아줘요.',
+  fried: '<b>바삭하고 기름진 튀김에는 산도와 탄산이 있는 스파클링 와인을 추천해요.</b><br>풍부한 기포와 산도가 입안을 산뜻하게 정리해줘서, 기름진 튀김을 먹은 뒤에도 다음 한입을 깔끔하게 즐길 수 있어요.<br>드라이 리슬링이나 산뜻한 로제 와인도 좋은 선택이에요.'
+};
+
+const FORTIFIED_TYPE_SWEETNESS = {type:'red', sweetness:'sweet'};
+
+/* ---------- 가격대: 손님에게 따로 묻지 않고, 결과에서 3개 가격대를 한 번에 보여줌 ---------- */
+const PRICE_TIERS = [
+  {id:'low', label:'2~3만원대'},
+  {id:'mid', label:'3~5만원대'},
+  {id:'high', label:'10만원대'}
+];
+
+/* ---------- 샘플 와인 데이터 (Phase 2에서 관리자 화면 + 공유 저장소로 대체 예정) ---------- */
+/* ============================================================
+   내부 QA 메모 (고객 화면에는 노출되지 않음 — 검수/인수인계 참고용)
+   ============================================================
+   - 토그네티 샤도네이: foodTags에서 'whitefish'(흰살 생선), 'shellfish'(조개·갑각류)를
+     의도적으로 제외한 상태입니다.
+     · 제외 근거: 점장님 확인 (임의 판단 아님)
+     · 사유: 오크 숙성 특성상 흰살 생선/조개·갑각류와 페어링 시 비리거나
+       철맛이 날 수 있다는 점장님 의견
+     · 향후 데이터 재검수 시, 이 wine의 foodTags가 비어있는 것을
+       '누락'으로 오인해 임의로 복원하지 말 것.
+   ============================================================ */
+const WINES = [
+  {name:'조이아 카베르네 소비뇽', importer:'에노테카', price:22500, priceTier:'low', type:'non_alcohol', body:'light', acidity:'medium', sweetness:'dry', foodTags:['beef','pork'], desc:'논알콜 레드, 카베르네 소비뇽 스타일', image:'images/wine_246.png'},
+  {name:'자카니니 트랄체토 디 알콜 로쏘', importer:'지에프비노', price:29500, priceTier:'low', type:'non_alcohol', body:'medium', acidity:'medium', sweetness:'medium', foodTags:['beef','pork'], desc:'논알콜 레드', image:'images/wine_208.png'},
+  {name:'비나 꼬소스 가르나차 쉬라', importer:'한산더블유앤비', price:15000, priceTier:'low', type:'red', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['beef','pork'], desc:'가르나차+쉬라 블렌드, 균형잡힌 미디엄 바디', image:''},
+  {name:'슈발리에 드 글라낭 메를로', importer:'비노파라다이스', price:15000, priceTier:'low', type:'red', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['beef','pork'], desc:'메를로, 부드러운 타닌의 미디엄 바디', image:''},
+  {name:'엘레베 까리냥', importer:'에노테카', price:15000, priceTier:'low', type:'red', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['beef','pork'], desc:'까리냥, 스파이시한 미디엄 바디', image:'images/wine_093.png'},
+  {name:'라 펠리시다드 프리미엄 쿠파주', importer:'비노파라다이스', price:15000, priceTier:'low', type:'red', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['fried','pork'], desc:'카베르네 소비뇽+쉬라 블렌드, 산미와 타닌의 밸런스', image:'images/wine_132.png'},
+  {name:'발디비에소 메를로', importer:'이지와인', price:15000, priceTier:'low', type:'red', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['beef','pork'], desc:'메를로, 부드러운 미디엄 바디', image:'images/wine_232.png'},
+  {name:'엘레베 피노누아', importer:'에노테카', price:18900, priceTier:'low', type:'red', body:'light', acidity:'medium', sweetness:'dry', foodTags:['fried','pork','redfish'], desc:'피노누아, 가벼운 산미와 붉은 과일향', image:'images/wine_043.png'},
+  {name:'레 자르젤리에르 피노누아', importer:'비케이트레이딩', price:19900, priceTier:'low', type:'red', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['fried','pork','redfish'], desc:'피노누아, 라이트바디', image:'images/wine_039.png'},
+  {name:'에보디아', importer:'동원와인', price:19900, priceTier:'low', type:'red', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['beef','pork'], desc:'100% 가르나차, 스페인 칼라타유드 지역 미디엄 바디', image:'images/wine_165.png'},
+  {name:'이터 피노누아', importer:'나라셀라', price:19900, priceTier:'low', type:'red', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['fried','pork','redfish'], desc:'피노누아, 라이트바디', image:'images/wine_151.png'},
+  {name:'폰텔라 끼안티', importer:'트렌드인터내셔날', price:19900, priceTier:'low', type:'red', body:'medium', acidity:'high', sweetness:'dry', foodTags:['beef','pork'], desc:'산지오베제 기반 끼안티, 미디엄 바디', image:'images/wine_130.png'},
+  {name:'비고르 레드', importer:'레뱅드매일', price:20000, priceTier:'low', type:'red', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['fried','pork'], desc:'산지오베제 75%+메를로 25% 블렌드, 높은 산미로 토마토 요리와 잘 어울림', image:'images/wine_147.png'},
+  {name:'뀌베 디즈네 피노누아', importer:'동원와인', price:20000, priceTier:'low', type:'red', body:'light', acidity:'medium', sweetness:'dry', foodTags:['fried','pork','redfish'], desc:'피노누아, 라이트바디', image:'images/wine_094.png'},
+  {name:'킹핀 레드', importer:'동원와인', price:20000, priceTier:'low', type:'red', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['beef','pork'], desc:'스페인 템프라니요/시라/카베르네소비뇽 블렌드 (바디감은 여러 판매처 기준 미디엄으로 확인)', image:'images/wine_114.png'},
+  {name:'올드 가르나차 바인스', importer:'콜리코', price:20000, priceTier:'low', type:'red', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['beef','pork'], desc:'올드바인 가르나차, 미디엄 바디', image:''},
+  {name:'바조 몬테풀치아노', importer:'와이너리', price:20000, priceTier:'low', type:'red', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['beef','pork'], desc:'몬테풀치아노, 이탈리아 미디엄 바디', image:'images/wine_084.png'},
+  {name:'아브 루 코네 앤 씨', importer:'타이거인터내셔날', price:22500, priceTier:'low', type:'red', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['pork'], desc:'랑그독 쉬라/그르나슈, 스파이시함이 양념육과 잘 어울림', image:'images/wine_102.png'},
+  {name:'레 자르젤리에르 멜롯쉬라', importer:'비케이트레이딩', price:22500, priceTier:'low', type:'red', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['beef','pork'], desc:'메를로+시라 블렌드', image:'images/wine_164.png'},
+  {name:'부 샤르무와 피노누아', importer:'케이셀라', price:24500, priceTier:'low', type:'red', body:'light', acidity:'medium', sweetness:'dry', foodTags:['fried','pork','redfish'], desc:'피노누아', image:'images/wine_028.png'},
+  {name:'엘 오페라 디 로쏘', importer:'프라임', price:24900, priceTier:'low', type:'red', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['beef','pork'], desc:'이탈리아 레드, 과실미와 산도가 다진고기 요리와 조화', image:'images/wine_014.png'},
+  {name:'무초 마스 스타라이트 에디션 레드', importer:'케이에스와인', price:24900, priceTier:'low', type:'red', body:'medium', acidity:'medium', sweetness:'medium', foodTags:['beef','pork'], desc:'오프드라이 스타일, 달콤한 과실 풍미로 양념육과 잘 어울림', image:'images/wine_069.png'},
+  {name:'마츠 엘 피카로', importer:'케이앤제이와인', price:24900, priceTier:'low', type:'red', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['pork','spicy'], desc:'스페인 토로 지역 템프라니요, 생동감 있는 타닌', image:'images/wine_007.png'},
+  {name:'록 드 라베이 플로리앙 몰레 피노 누아', importer:'비노파라다이스', price:24900, priceTier:'low', type:'red', body:'light', acidity:'medium', sweetness:'dry', foodTags:['fried','pork','redfish'], desc:'피노누아, 라이트바디', image:'images/wine_225.png'},
+  {name:'무초 마스 골드', importer:'케이에스와인', price:27900, priceTier:'low', type:'red', body:'full', acidity:'medium', sweetness:'medium', foodTags:['beef','pork'], desc:'풀바디, 은은한 단맛이 도는 진한 과실향 레드', image:'images/wine_113.png'},
+  {name:'이디 디 마르조 카르날리스', importer:'비엘비코리아', price:29900, priceTier:'low', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','pork'], desc:'프리미티보 기반, 농축된 아로마와 높은 알코올감', image:'images/wine_244.png'},
+  {name:'베르테네브로스 템프라니요', importer:'케이에스와인', price:29900, priceTier:'low', type:'red', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['beef','pork'], desc:'템프라니요, 스페인 미디엄 바디', image:'images/wine_149.png'},
+  {name:'러시안 잭 피노누아', importer:'비노파라다이스', price:29900, priceTier:'low', type:'red', body:'light', acidity:'high', sweetness:'dry', foodTags:['fried','pork','redfish'], desc:'피노누아', image:'images/wine_047.png'},
+  {name:'브레드 앤 버터 피노누아', importer:'롯데칠성음료', price:34500, priceTier:'mid', type:'red', body:'light', acidity:'medium', sweetness:'dry', foodTags:['fried','pork','redfish'], desc:'피노누아', image:'images/wine_170.png'},
+  {name:'아누리', importer:'프라임', price:36500, priceTier:'mid', type:'red', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['beef','pork'], desc:'부담없는 바디감과 부드러운 타닌 (출처 검색 확인은 안됨)', image:''},
+  {name:'한 피노누아', importer:'동원와인', price:37900, priceTier:'mid', type:'red', body:'light', acidity:'medium', sweetness:'dry', foodTags:['fried','pork','redfish'], desc:'피노누아', image:'images/wine_137.png'},
+  {name:'보글 피노누아', importer:'동원와인', price:37900, priceTier:'mid', type:'red', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['fried','pork','redfish'], desc:'피노누아', image:'images/wine_015.png'},
+  {name:'신퀀타 꼴레지오네', importer:'금양인터내셔날', price:38900, priceTier:'mid', type:'red', body:'full', acidity:'medium', sweetness:'medium', foodTags:['beef','pork'], desc:'풀바디, 은은한 단맛이 도는 진한 과실향 레드', image:'images/wine_016.png'},
+  {name:'발 델레 로제 아우렐리오 마렘마 20/21', importer:'비케이트레이딩', price:39900, priceTier:'mid', type:'red', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['beef','pork'], desc:'마렘마 지역 산지오베제 기반 블렌드', image:'images/wine_202.png'},
+  {name:'인 쉽스 클로딩 피노누아', importer:'비니더스코리아', price:42900, priceTier:'mid', type:'red', body:'light', acidity:'high', sweetness:'dry', foodTags:['fried','pork','redfish'], desc:'피노누아', image:''},
+  {name:'카사 로호 마초맨', importer:'금양인터내셔날', price:43900, priceTier:'mid', type:'red', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['beef','pork'], desc:'모나스트렐 기반, 스페인 미디엄 바디', image:'images/wine_115.png'},
+  {name:'루이자도 부르고뉴 피노누아', importer:'신세계엘앤비', price:49900, priceTier:'mid', type:'red', body:'light', acidity:'medium', sweetness:'dry', foodTags:['fried','pork','redfish'], desc:'부르고뉴 피노누아', image:'images/wine_012.png'},
+  {name:'섹슈얼 초콜릿', importer:'엘컴퍼니', price:54000, priceTier:'high', type:'red', body:'full', acidity:'medium', sweetness:'medium', foodTags:['beef','pork'], desc:'풀바디, 은은한 단맛이 도는 진한 과실향 레드', image:'images/wine_076.png'},
+  {name:'클라우디베이 피노누아', importer:'엠에이치', price:59000, priceTier:'high', type:'red', body:'light', acidity:'high', sweetness:'dry', foodTags:['fried','pork','redfish'], desc:'클라우디베이 피노누아', image:'images/wine_027.png'},
+  {name:'텍스트북 멜롯', importer:'씨에스알', price:59000, priceTier:'high', type:'red', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['beef','pork'], desc:'메를로', image:'images/wine_078.png'},
+  {name:'판티니 에디찌오네', importer:'와이넬', price:79000, priceTier:'high', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','pork'], desc:'풀바디 드라이 레드, 진한 과실향', image:'images/wine_122.png'},
+  {name:'롬바우어 피노누아 22', importer:'와인투유', price:146000, priceTier:'high', type:'red', body:'light', acidity:'medium', sweetness:'dry', foodTags:['fried','pork','redfish'], desc:'피노누아, 롬바우어', image:'images/wine_227.png'},
+  {name:'노스트로스 리제르바 까쇼', importer:'프라임', price:15000, priceTier:'low', type:'red', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'카베르네 소비뇽, 묵직한 타닌', image:'images/wine_179.png'},
+  {name:'발디비에소 까베르네쇼비뇽', importer:'이지와인', price:15000, priceTier:'low', type:'red', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'카베르네 소비뇽, 진한 블랙커런트향', image:'images/wine_231.png'},
+  {name:'마제스틱 카베르네 소비뇽', importer:'케이셀라', price:15000, priceTier:'low', type:'red', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'카베르네 소비뇽, 풀바디 드라이 레드', image:'images/wine_174.png'},
+  {name:'슈발리에 드 글라낭 카베르네소비뇽', importer:'비노파라다이스', price:15000, priceTier:'low', type:'red', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'카베르네 소비뇽, 묵직한 풀바디', image:'images/wine_112.png'},
+  {name:'페이산 까베르네쇼비뇽', importer:'와이너리', price:15000, priceTier:'low', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'카베르네 소비뇽', image:'images/wine_086.png'},
+  {name:'코알라 랜치 쉬라즈', importer:'비노파라다이스', price:15000, priceTier:'low', type:'red', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'쉬라즈, 진하고 스파이시한 풀바디', image:'images/wine_088.png'},
+  {name:'르 뮤탕 루즈', importer:'에노테카', price:15000, priceTier:'low', type:'red', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['beef','cheese_salty'], desc:'쉬라즈/그르나슈 계열, 붉은 과일향과 부드러운 타닌', image:'images/wine_228.png'},
+  {name:'까테나 자파타 알라모스 말벡', importer:'신세계엘앤비', price:16900, priceTier:'low', type:'red', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'말벡, 아르헨티나 대표 풀바디 레드', image:'images/wine_030.png'},
+  {name:'770마일즈 진판델', importer:'루뱅쿱', price:19500, priceTier:'low', type:'red', body:'full', acidity:'low', sweetness:'dry', foodTags:['beef','lamb'], desc:'진판델, 잼같은 과실향의 풀바디', image:'images/wine_216.png'},
+  {name:'딥 루즈 지에스엠', importer:'케이셀라', price:19900, priceTier:'low', type:'red', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'GSM(그르나슈-시라-무르베드르) 블렌드, 풀바디', image:'images/wine_185.png'},
+  {name:'이터 카쇼', importer:'나라셀라', price:19900, priceTier:'low', type:'red', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'카베르네 소비뇽', image:'images/wine_210.png'},
+  {name:'바스티오니 델라 로카 아파시멘토 풀리아', importer:'케이셀라', price:20000, priceTier:'low', type:'red', body:'full', acidity:'low', sweetness:'dry', foodTags:['beef','lamb'], desc:'아파시멘토(건조포도 양조), 농축된 풀바디', image:'images/wine_229.png'},
+  {name:'호프엔드 레드블렌드', importer:'한산더블유앤비', price:20000, priceTier:'low', type:'red', body:'full', acidity:'medium', sweetness:'medium', foodTags:['beef','lamb'], desc:'호주 쉬라즈/말벡 블렌드, 진한 과실향과 은은한 잔당감', image:'images/wine_163.png'},
+  {name:'호프엔드 까베르네쇼비뇽', importer:'한산더블유앤비', price:20000, priceTier:'low', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'카베르네 소비뇽', image:'images/wine_173.png'},
+  {name:'미션서드 카베르네시라', importer:'이지와인', price:20000, priceTier:'low', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'카베르네+시라 블렌드, 풀바디', image:'images/wine_141.png'},
+  {name:'펜리 썬 오브 타이탄', importer:'비케이트레이딩', price:20000, priceTier:'low', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef'], desc:'카베르네 소비뇽 기반, 짱짱한 타닌과 구조감', image:'images/wine_154.png'},
+  {name:'뀌베 디즈네 까베르네 소비뇽', importer:'동원와인', price:20000, priceTier:'low', type:'red', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'카베르네 소비뇽', image:'images/wine_177.png'},
+  {name:'엔조 빈센조 아파시멘토 푸글리아', importer:'비눔인터내셔널', price:23900, priceTier:'low', type:'red', body:'full', acidity:'low', sweetness:'dry', foodTags:['beef','lamb'], desc:'아파시멘토, 농축된 풀바디', image:'images/wine_077.png'},
+  {name:'부 샤르무와 카베르네 소비뇽', importer:'케이셀라', price:24500, priceTier:'low', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'카베르네 소비뇽', image:'images/wine_059.png'},
+  {name:'바스티오니 델라 로카 프리미티보 디 만두리아', importer:'케이셀라', price:24900, priceTier:'low', type:'red', body:'full', acidity:'high', sweetness:'dry', foodTags:['beef','lamb'], desc:'프리미티보 디 만두리아, 풀바디', image:'images/wine_230.png'},
+  {name:'에스꼬리후엘라 파밀리아 가스콘 말벡', importer:'바쿠스[PKI]', price:25900, priceTier:'low', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'말벡', image:'images/wine_068.png'},
+  {name:'펜폴즈 쿠능가 힐 쉬라즈', importer:'금양인터내셔날', price:25900, priceTier:'low', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'쉬라즈, 펜폴즈 쿠능가 힐', image:'images/wine_092.png'},
+  {name:'그란데 알베로네 진판델', importer:'타이거인터내셔날', price:27500, priceTier:'low', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'진판델, 풀바디', image:'images/wine_061.png'},
+  {name:'바르바네라 아파시멘토', importer:'프라임', price:28500, priceTier:'low', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'아파시멘토, 풀바디', image:'images/wine_120.png'},
+  {name:'맥 매니스 쁘띠쉬라', importer:'와인투유', price:29900, priceTier:'low', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'쁘띠 시라, 진한 풀바디', image:'images/wine_144.png'},
+  {name:'인도미타 프리미엄 듀엣떼 카쇼', importer:'프라임', price:29900, priceTier:'low', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'카베르네 소비뇽', image:'images/wine_195.png'},
+  {name:'네비게이터 진판델', importer:'에노테카', price:29900, priceTier:'low', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'진판델, 풀바디', image:'images/wine_017.png'},
+  {name:'루리 에디지오네 리미타타 프리미티보', importer:'비케이트레이딩', price:29900, priceTier:'low', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'프리미티보, 풀바디', image:'images/wine_162.png'},
+  {name:'리틀 자이언트 쉬라즈', importer:'그레이프코리아', price:29900, priceTier:'low', type:'red', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'쉬라즈', image:'images/wine_075.png'},
+  {name:'에스엘 프리미티보 수수마니엘로 살렌토', importer:'비눔인터내셔널', price:29900, priceTier:'low', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'프리미티보 블렌드, 풀바디', image:'images/wine_243.png'},
+  {name:'네비게이터 까베르네쇼비뇽', importer:'에노테카', price:29900, priceTier:'low', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'카베르네 소비뇽', image:'images/wine_205.png'},
+  {name:'트러블메이커', importer:'비노파라다이스', price:29900, priceTier:'low', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'론 스타일 레드 블렌드, 풀바디', image:'images/wine_048.png'},
+  {name:'꼬또 데 이마스 리제르바', importer:'비노에이치', price:31900, priceTier:'mid', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'풀바디 드라이 레드', image:'images/wine_131.png'},
+  {name:'후안 길 실버라벨', importer:'케이앤제이와인', price:32500, priceTier:'mid', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'모나스트렐 기반, 스페인 후미야 풀바디', image:'images/wine_190.png'},
+  {name:'페냐롤렌 까쇼', importer:'동원와인', price:32900, priceTier:'mid', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'카베르네 소비뇽', image:''},
+  {name:'1865 셀렉티드빈야드 까쇼', importer:'금양인터내셔날', price:34900, priceTier:'mid', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'카베르네 소비뇽', image:'images/wine_178.png'},
+  {name:'마츠 엘 레시오', importer:'케이앤제이와인', price:34900, priceTier:'mid', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'풀바디 드라이 레드', image:'images/wine_155.png'},
+  {name:'콘테사 까놀라 프리미티보 디 만두리아', importer:'비니더스코리아', price:35900, priceTier:'mid', type:'red', body:'full', acidity:'high', sweetness:'dry', foodTags:['beef','lamb'], desc:'프리미티보 디 만두리아', image:''},
+  {name:'베서니 바로사밸리 쉬라즈', importer:'와이너리', price:36900, priceTier:'mid', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'쉬라즈, 바로사밸리', image:'images/wine_035.png'},
+  {name:'베서니 바로사밸리 지에스엠', importer:'와이너리', price:36900, priceTier:'mid', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'GSM 블렌드', image:'images/wine_104.png'},
+  {name:'보글 까베르네 소비뇽', importer:'동원와인', price:37500, priceTier:'mid', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'카베르네 소비뇽', image:'images/wine_182.png'},
+  {name:'노통 리제르바 말벡', importer:'에노테카', price:38500, priceTier:'mid', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'말벡', image:'images/wine_138.png'},
+  {name:'투핸즈 엔젤스 쉐어', importer:'신세계엘앤비', price:39900, priceTier:'mid', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'쉬라즈, 투핸즈 앤젤스쉐어', image:'images/wine_139.png'},
+  {name:'몬테스 알파 카쇼', importer:'나라셀라', price:39900, priceTier:'mid', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'카베르네 소비뇽, 몬테스 알파', image:'images/wine_201.png'},
+  {name:'알치미아 프리미티보', importer:'프라임', price:39900, priceTier:'mid', type:'red', body:'full', acidity:'high', sweetness:'dry', foodTags:['beef','lamb'], desc:'프리미티보', image:''},
+  {name:'샤토 테이시에 생테밀리옹 그랑 크뤼', importer:'씨에스알', price:39900, priceTier:'mid', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'보르도 생테밀리옹 그랑크뤼, 메를로 기반', image:'images/wine_136.png'},
+  {name:'시데랄', importer:'금양인터내셔날', price:39900, priceTier:'mid', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'칠레 아이콘 와인, 카베르네+시라 블렌드', image:'images/wine_083.png'},
+  {name:'끌로 드 로스 씨에떼', importer:'하이트진로', price:45900, priceTier:'mid', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'아르헨티나 말벡 중심 블렌드', image:'images/wine_157.png'},
+  {name:'샤토 퐁테 플래장스 생테밀리옹 그랑크뤼18', importer:'비노파라다이스', price:47500, priceTier:'mid', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'보르도 생테밀리옹 그랑크뤼', image:'images/wine_239.png'},
+  {name:'랄슨 제이콥스 나파밸리 카버네소비뇽', importer:'콜리코', price:48900, priceTier:'mid', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'나파밸리 카베르네 소비뇽', image:'images/wine_188.png'},
+  {name:'꼬또 데 이마스 그랑리제르바', importer:'비노에이치', price:48900, priceTier:'mid', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'풀바디 드라이 레드', image:'images/wine_142.png'},
+  {name:'몰리두커 더 복서', importer:'씨에스알', price:49500, priceTier:'mid', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'쉬라즈, 몰리두커', image:'images/wine_064.png'},
+  {name:'코네타블 딸보 21', importer:'극동', price:55000, priceTier:'high', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'샤토 딸보 보르도', image:''},
+  {name:'안젤로 프리모', importer:'케이에스와인', price:55000, priceTier:'high', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'풀바디 드라이 레드', image:'images/wine_146.png'},
+  {name:'텍스트북 까베르네쇼비뇽', importer:'씨에스알', price:59000, priceTier:'high', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'카베르네 소비뇽', image:'images/wine_019.png'},
+  {name:'젤소 도로', importer:'비넘', price:69000, priceTier:'high', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'풀바디 드라이 레드', image:'images/wine_245.png'},
+  {name:'덕혼 패러덕스', importer:'나라셀라', price:69000, priceTier:'high', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'진판델 기반 나파밸리 블렌드', image:'images/wine_189.png'},
+  {name:'투핸즈 벨라스 가든', importer:'신세계엘앤비', price:79000, priceTier:'high', type:'red', body:'full', acidity:'high', sweetness:'dry', foodTags:['beef','lamb'], desc:'쉬라즈, 투핸즈 벨라스가든', image:'images/wine_207.png'},
+  {name:'몰리두커 블루 아이드 보이', importer:'씨에스알', price:89000, priceTier:'high', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'쉬라즈, 몰리두커', image:'images/wine_063.png'},
+  {name:'1881 나파 까쇼', importer:'와인투유', price:97000, priceTier:'high', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'나파밸리 카베르네 소비뇽', image:'images/wine_200.png'},
+  {name:'오스틴 호프 까베르네 소비뇽', importer:'타이거인터내셔날', price:139000, priceTier:'high', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'카베르네 소비뇽, 오스틴 호프', image:'images/wine_206.png'},
+  {name:'조셉펠프스 나파 까쇼 22', importer:'엠에이치', price:155000, priceTier:'high', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'나파밸리 카베르네 소비뇽', image:'images/wine_213.png'},
+  {name:'케이머스 카버네소비뇽 50주년', importer:'나라셀라', price:169000, priceTier:'high', type:'red', body:'full', acidity:'medium', sweetness:'dry', foodTags:['beef','lamb'], desc:'케이머스 카베르네 소비뇽', image:'images/wine_197.png'},
+  {name:'볼리치나 프로세코', importer:'케이셀라', price:26500, priceTier:'low', type:'sparkling', body:'light', acidity:'high', sweetness:'dry', foodTags:['cheese_unconfirmed','fried','redfish'], desc:'프로세코, 산뜻한 스파클링', image:'images/wine_234.png'},
+  {name:'알리망 라우그네흐 알자스 크레망 브륏', importer:'와이너리', price:35900, priceTier:'mid', type:'sparkling', body:'medium', acidity:'high', sweetness:'dry', foodTags:['cheese_unconfirmed','fried','redfish'], desc:'크레망 드 알자스, 브뤼 스파클링', image:'images/wine_242.png'},
+  {name:'찰스 하이직 브뤼 리저브', importer:'까브드뱅', price:99000, priceTier:'high', type:'sparkling', body:'full', acidity:'high', sweetness:'dry', foodTags:['cheese_unconfirmed','fried','redfish'], desc:'샴페인 브뤼, 찰스 하이직 (풀바디 프레스티지 샴페인)', image:'images/wine_045.png'},
+  {name:'러시안 잭 피노 그리', importer:'비노파라다이스', price:22900, priceTier:'low', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['redfish','shellfish','whitefish'], desc:'피노 그리', image:'images/wine_080.png'},
+  {name:'자카니니 트랄체토 피노그리지오', importer:'지에프비노', price:39500, priceTier:'mid', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['redfish','shellfish','whitefish'], desc:'피노그리지오', image:'images/wine_194.png'},
+  {name:'조이아 오가닉 샤르도네 스파클링', importer:'에노테카', price:22500, priceTier:'low', type:'non_alcohol', body:'light', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'논알콜 스파클링, 유기농 샤르도네', image:'images/wine_004.png'},
+  {name:'자카니니 트랄체토 디 알콜 비앙코', importer:'지에프비노', price:27900, priceTier:'low', type:'non_alcohol', body:'light', acidity:'medium', sweetness:'medium', foodTags:['whitefish'], desc:'논알콜 화이트', image:'images/wine_204.png'},
+  {name:'위스퍼링 엔젤', importer:'엠에이치', price:26500, priceTier:'low', type:'rose', body:'light', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'프로방스 대표 드라이 로제', image:'images/wine_203.png'},
+  {name:'그린베이 소비뇽 블랑 스파클링', importer:'와인박스 코리아', price:24500, priceTier:'low', type:'sparkling', body:'light', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'소비뇽 블랑 스파클링', image:'images/wine_049.png'},
+  {name:'마제스틱 샤르도네', importer:'케이셀라', price:15000, priceTier:'low', type:'white', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'샤르도네, 미디엄 바디', image:''},
+  {name:'발디비에소 샤도네이', importer:'이지와인', price:15000, priceTier:'low', type:'white', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'샤르도네', image:'images/wine_233.png'},
+  {name:'노스트로스 리제르바 샤도네이', importer:'프라임', price:15000, priceTier:'low', type:'white', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'샤르도네', image:'images/wine_079.png'},
+  {name:'르 뮤탕 블랑', importer:'에노테카', price:15000, priceTier:'low', type:'white', body:'medium', acidity:'high', sweetness:'dry', foodTags:['fried','shellfish','whitefish'], desc:'소비뇽 블랑+샤르도네 블렌딩, 산뜻한 산미와 유질감', image:'images/wine_081.png'},
+  {name:'옐로우테일 퓨터 브라이트 소비뇽 블랑', importer:'롯데칠성음료', price:15000, priceTier:'low', type:'white', body:'light', acidity:'medium', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'소비뇽 블랑, 상큼한 라이트바디', image:'images/wine_212.png'},
+  {name:'장발몽 샤르도네', importer:'와이넬', price:15000, priceTier:'low', type:'white', body:'light', acidity:'medium', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'샤르도네', image:'images/wine_040.png'},
+  {name:'엘레베 블랑', importer:'에노테카', price:15000, priceTier:'low', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'랑그독 화이트, 또렷한 산미로 해산물과 잘 어울림', image:'images/wine_152.png'},
+  {name:'코알라 랜치 샤도네이', importer:'비노파라다이스', price:15000, priceTier:'low', type:'white', body:'light', acidity:'medium', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'샤르도네', image:'images/wine_168.png'},
+  {name:'몽포드 소비뇽 블랑', importer:'비케이트레이딩', price:16900, priceTier:'low', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'소비뇽 블랑', image:'images/wine_006.png'},
+  {name:'인도미타 그랑리제르바 쇼비뇽블랑', importer:'프라임', price:18500, priceTier:'low', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'소비뇽 블랑', image:'images/wine_020.png'},
+  {name:'토타라 말보로 소비뇽블랑', importer:'케이셀라', price:19900, priceTier:'low', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'말보로 소비뇽 블랑, 뉴질랜드 대표 스타일', image:'images/wine_022.png'},
+  {name:'테슬레 샤르도네', importer:'타이거인터내셔날', price:19900, priceTier:'low', type:'white', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'샤르도네', image:'images/wine_033.png'},
+  {name:'이터 샤도', importer:'나라셀라', price:19900, priceTier:'low', type:'white', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'샤르도네', image:'images/wine_180.png'},
+  {name:'타카 소비뇽 블랑', importer:'금양인터내셔날', price:19900, priceTier:'low', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'소비뇽 블랑', image:'images/wine_009.png'},
+  {name:'서던 오션 소비뇽블랑 사우스 아프리카', importer:'케이에스와인', price:19900, priceTier:'low', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'소비뇽 블랑', image:'images/wine_198.png'},
+  {name:'레 자르젤리에르 비오니에', importer:'비케이트레이딩', price:19900, priceTier:'low', type:'white', body:'full', acidity:'low', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'비오니에, 향긋하고 진한 풀바디', image:'images/wine_121.png'},
+  {name:'무초 마스 화이트', importer:'케이에스와인', price:20000, priceTier:'low', type:'white', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['spicy','whitefish'], desc:'아로마틱한 데일리 화이트, 은은한 산미와 향', image:'images/wine_091.png'},
+  {name:'호크스 드리프트 쇼비뇽 블랑', importer:'와이너리', price:20000, priceTier:'low', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'소비뇽 블랑', image:'images/wine_046.png'},
+  {name:'미션서드 샤도네이', importer:'이지와인', price:20000, priceTier:'low', type:'white', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'샤르도네', image:'images/wine_095.png'},
+  {name:'비고르 화이트', importer:'레뱅드매일', price:20000, priceTier:'low', type:'white', body:'light', acidity:'medium', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'파세리나(Passerina) 100%, 깔끔한 산미와 미네랄감', image:'images/wine_150.png'},
+  {name:'뀌베 디즈네 샤도네이', importer:'동원와인', price:20000, priceTier:'low', type:'white', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'샤르도네', image:'images/wine_219.png'},
+  {name:'뮤직베이 소비뇽블랑', importer:'와인박스 코리아', price:21500, priceTier:'low', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'소비뇽 블랑', image:'images/wine_133.png'},
+  {name:'어썸제주 소비뇽블랑', importer:'동원와인', price:22500, priceTier:'low', type:'white', body:'light', acidity:'low', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'소비뇽 블랑', image:'images/wine_066.png'},
+  {name:'러시안 잭 소비뇽블랑', importer:'비노파라다이스', price:22900, priceTier:'low', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'소비뇽 블랑', image:'images/wine_171.png'},
+  {name:'머드 하우스 소비뇽 블랑', importer:'하이트진로', price:22900, priceTier:'low', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'소비뇽 블랑', image:'images/wine_029.png'},
+  {name:'록 드 라베이 플로리앙 몰레 소비뇽 블랑', importer:'비노파라다이스', price:23900, priceTier:'low', type:'white', body:'light', acidity:'medium', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'소비뇽 블랑', image:'images/wine_224.png'},
+  {name:'부 샤르무와 샤도네이', importer:'케이셀라', price:24500, priceTier:'low', type:'white', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'샤르도네', image:'images/wine_097.png'},
+  {name:'프리츠 짐머 리슬링', importer:'나라셀라', price:24500, priceTier:'low', type:'white', body:'light', acidity:'medium', sweetness:'medium', foodTags:['spicy','whitefish'], desc:'독일 모젤 리슬링, 살짝 단맛이 도는 오프드라이 스타일', image:'images/wine_024.png'},
+  {name:'홀라쇼 쇼비뇽 블랑', importer:'밀레짐와인', price:24900, priceTier:'low', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'소비뇽 블랑', image:''},
+  {name:'스톤 베이 쇼비뇽 블랑', importer:'에르네스', price:24900, priceTier:'low', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'소비뇽 블랑', image:'images/wine_018.png'},
+  {name:'라파우라 스프링스 소비뇽 블랑', importer:'금양인터내셔날', price:24900, priceTier:'low', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'소비뇽 블랑', image:'images/wine_156.png'},
+  {name:'무초 마스 스타라이트 에디션 화이트', importer:'케이에스와인', price:24900, priceTier:'low', type:'white', body:'medium', acidity:'high', sweetness:'dry', foodTags:['fried','shellfish','whitefish'], desc:'비오니에+소비뇽 블랑+샤르도네 블렌드, 화사한 아로마', image:'images/wine_098.png'},
+  {name:'쉴드 소비뇽블랑', importer:'니혼슈코리아', price:25900, priceTier:'low', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'소비뇽 블랑', image:'images/wine_025.png'},
+  {name:'티키 싱글빈야드 소비뇽블랑', importer:'와인박스 코리아', price:26500, priceTier:'low', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'소비뇽 블랑', image:'images/wine_249.png'},
+  {name:'배비치 블랙라벨 말보로 쇼블', importer:'롯데칠성음료', price:26900, priceTier:'low', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'말보로 소비뇽 블랑', image:'images/wine_196.png'},
+  {name:'크라우디드 하우스 소비뇽 블랑', importer:'케이셀라', price:26900, priceTier:'low', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'소비뇽 블랑', image:'images/wine_062.png'},
+  {name:'서던 오션 소비뇽블랑', importer:'케이에스와인', price:28900, priceTier:'low', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'소비뇽 블랑', image:'images/wine_191.png'},
+  {name:'마운트 릴리 쇼비뇽블랑', importer:'문도비노', price:29500, priceTier:'low', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'소비뇽 블랑', image:'images/wine_145.png'},
+  {name:'조지미쉘 쇼비뇽블랑', importer:'와인투유', price:29900, priceTier:'low', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'소비뇽 블랑', image:'images/wine_057.png'},
+  {name:'티라키 쇼비뇽 블랑', importer:'와인투유', price:29900, priceTier:'low', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'소비뇽 블랑', image:'images/wine_060.png'},
+  {name:'바벤코프 꼬또 부르기뇽 블랑', importer:'비노에이치', price:29900, priceTier:'low', type:'white', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'부르고뉴 샤르도네 기반 화이트', image:'images/wine_071.png'},
+  {name:'맥 매니스 비오니에', importer:'와인투유', price:29900, priceTier:'low', type:'white', body:'medium', acidity:'low', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'비오니에, 풀바디', image:'images/wine_119.png'},
+  {name:'킴 크로포드 말보로 쇼블', importer:'롯데칠성음료', price:29900, priceTier:'low', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'말보로 소비뇽 블랑', image:'images/wine_186.png'},
+  {name:'그로브밀 소비뇽블랑', importer:'동원와인', price:29900, priceTier:'low', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'소비뇽 블랑', image:'images/wine_065.png'},
+  {name:'빌라마리아 프라이빗 빈 소비뇽블랑', importer:'신동와인', price:29900, priceTier:'low', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'소비뇽 블랑', image:'images/wine_023.png'},
+  {name:'알자스 알리망 로그네 리슬링', importer:'와이너리', price:29900, priceTier:'low', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['spicy','whitefish'], desc:'알자스 리슬링', image:'images/wine_125.png'},
+  {name:'피폴리 비앙코 바실리카타', importer:'와이넬', price:32900, priceTier:'mid', type:'white', body:'light', acidity:'medium', sweetness:'dry', foodTags:['spicy','whitefish'], desc:'아로마틱한 데일리 화이트, 은은한 산미와 향', image:'images/wine_167.png'},
+  {name:'투 리버즈 쇼비뇽블랑', importer:'비노킴즈', price:33000, priceTier:'mid', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'소비뇽 블랑', image:'images/wine_159.png'},
+  {name:'도멘 드 라 팽소니에 부브레 섹', importer:'비넘', price:33500, priceTier:'mid', type:'white', body:'medium', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'부브레 섹, 슈냉 블랑 기반 드라이 화이트', image:'images/wine_126.png'},
+  {name:'페리페리 지비뽀 리올라', importer:'비엘비코리아', price:33900, priceTier:'mid', type:'white', body:'light', acidity:'medium', sweetness:'medium', foodTags:['spicy','whitefish'], desc:'아로마틱한 데일리 화이트, 은은한 산미와 향', image:''},
+  {name:'폴포 알바리뇨', importer:'비노스와인', price:33900, priceTier:'mid', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'알바리뇨', image:'images/wine_053.png'},
+  {name:'브레드 앤 버터 샤도네이', importer:'롯데칠성음료', price:34500, priceTier:'mid', type:'white', body:'full', acidity:'low', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'오크 숙성 샤르도네, 크리미한 풀바디', image:'images/wine_118.png'},
+  {name:'파스칼 졸리베 아띠튀드 소비뇽 블랑', importer:'에노테카', price:34500, priceTier:'mid', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'루아르 소비뇽 블랑', image:'images/wine_140.png'},
+  {name:'타피 쇼비뇽 블랑', importer:'와인투유', price:34900, priceTier:'mid', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'소비뇽 블랑', image:'images/wine_129.png'},
+  {name:'조지미쉘 리저브 소비뇽 블랑', importer:'와인투유', price:35500, priceTier:'mid', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'소비뇽 블랑', image:''},
+  {name:'보글 슈냉 블랑', importer:'동원와인', price:36500, priceTier:'mid', type:'white', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'슈냉 블랑', image:'images/wine_050.png'},
+  {name:'자카니니 트랄체토 일 비앙코 디 치쵸', importer:'지에프비노', price:38500, priceTier:'mid', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['whitefish'], desc:'상큼하고 세련된 미네랄감의 화이트, 식전주로 적합', image:'images/wine_199.png'},
+  {name:'크리머리 샤도네이', importer:'씨에스알', price:38900, priceTier:'mid', type:'white', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'샤르도네', image:'images/wine_172.png'},
+  {name:'루나가이아 지삐뽀', importer:'머천트인터내셔널', price:39900, priceTier:'mid', type:'white', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['spicy','whitefish'], desc:'지비뽀 품종, 열대과일향의 드라이에 가까운 화이트', image:'images/wine_226.png'},
+  {name:'도그 포인트 소비뇽블랑', importer:'빈티지코리아', price:39900, priceTier:'mid', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'소비뇽 블랑, 도그포인트', image:'images/wine_056.png'},
+  {name:'그레이 왁 쇼비뇽 블랑', importer:'루뱅쿱', price:41900, priceTier:'mid', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'소비뇽 블랑', image:'images/wine_193.png'},
+  {name:'클라우디베이 소비뇽블랑', importer:'엠에이치', price:46900, priceTier:'mid', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'소비뇽 블랑, 클라우디베이', image:'images/wine_181.png'},
+  {name:'루이자도 부르고뉴 샤도네이', importer:'신세계엘앤비', price:48900, priceTier:'mid', type:'white', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'부르고뉴 샤르도네', image:'images/wine_169.png'},
+  {name:'토그네티 샤도네이', importer:'와인투유', price:49000, priceTier:'mid', type:'white', body:'medium', acidity:'medium', sweetness:'dry', foodTags:[], desc:'샤르도네', image:'images/wine_248.png'},
+  {name:'도멘 뒤 샤도네이 샤블리', importer:'타이거인터내셔날', price:53000, priceTier:'high', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'샤블리', image:'images/wine_135.png'},
+  {name:'롬바우어 쇼비뇽 블랑', importer:'와인투유', price:54500, priceTier:'high', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'소비뇽 블랑', image:'images/wine_058.png'},
+  {name:'클라우디베이 샤도네이', importer:'엠에이치', price:55000, priceTier:'high', type:'white', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'샤르도네, 클라우디베이', image:'images/wine_002.png'},
+  {name:'루이자도 샤블리', importer:'신세계엘앤비', price:55000, priceTier:'high', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'샤블리', image:'images/wine_109.png'},
+  {name:'가르니에르 앤 피스 샤블리', importer:'비노에이치', price:56000, priceTier:'high', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'샤블리', image:'images/wine_217.png'},
+  {name:'S_쿠르토 미슐레 샤블리', importer:'에노테카-불곤', price:64000, priceTier:'high', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'샤블리', image:'images/wine_175.png'},
+  {name:'텍스트북 샤도네이', importer:'씨에스알', price:65000, priceTier:'high', type:'white', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'샤르도네', image:'images/wine_134.png'},
+  {name:'롬바우어 카네로스 샤도네이 23', importer:'와인투유', price:89000, priceTier:'high', type:'white', body:'full', acidity:'medium', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'카네로스 샤르도네이, 진한 오크 풍미의 풀바디', image:'images/wine_184.png'},
+  {name:'고뜨홍 샤블리 쁘리미에 끄루 보꾸팡', importer:'루뱅쿱', price:89000, priceTier:'high', type:'white', body:'medium', acidity:'high', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'샤블리 프리미에 크뤼', image:'images/wine_090.png'},
+  {name:'올리비에 르플레브 부르고뉴 레 세티 21', importer:'빈티지-불곤', price:95000, priceTier:'high', type:'white', body:'medium', acidity:'medium', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'부르고뉴 샤르도네', image:'images/wine_052.png'},
+  {name:'파니엔테 나파밸리 샤도네이 23', importer:'나라셀라', price:179000, priceTier:'high', type:'white', body:'full', acidity:'medium', sweetness:'dry', foodTags:['shellfish','whitefish'], desc:'나파밸리 샤르도네, 진한 오크 풍미의 풀바디', image:'images/wine_176.png'},
+  {name:'미션 리슬링', importer:'유와인', price:225000, priceTier:'high', type:'white', body:'light', acidity:'medium', sweetness:'dry', foodTags:['spicy','whitefish'], desc:'리슬링', image:'images/wine_089.png'},
+  {name:'솔라라 로제', importer:'비니더스코리아', price:18500, priceTier:'low', type:'rose', body:'light', acidity:'medium', sweetness:'dry', foodTags:['fried','shellfish'], desc:'드라이 로제, 산뜻한 여름 와인', image:'images/wine_100.png'},
+  {name:'펜리 이스테이트 조지나 스파클링', importer:'비케이트레이딩', price:20000, priceTier:'low', type:'sparkling', body:'light', acidity:'medium', sweetness:'dry', foodTags:['fried','shellfish'], desc:'로제빛 스파클링, 화사한 붉은 과실향', image:'images/wine_085.png'},
+  {name:'그랑꾸베 1531 브룻 로제', importer:'이지와인', price:31900, priceTier:'mid', type:'sparkling', body:'light', acidity:'high', sweetness:'dry', foodTags:['fried','shellfish'], desc:'리무 크레망 브뤼 로제', image:''},
+  {name:'모엣 샹동 로제 (알병)', importer:'엠에이치', price:79000, priceTier:'high', type:'sparkling', body:'medium', acidity:'high', sweetness:'dry', foodTags:['fried','shellfish'], desc:'모엣샹동 로제 브뤼', image:'images/wine_211.png'},
+  {name:'모엣 샹동 로제 EOY (케이스)', importer:'엠에이치', price:83000, priceTier:'high', type:'sparkling', body:'medium', acidity:'high', sweetness:'dry', foodTags:['fried','shellfish'], desc:'모엣샹동 로제 브뤼', image:'images/wine_215.png'},
+  {name:'뵈브 클리코 로제', importer:'엠에이치', price:89900, priceTier:'high', type:'sparkling', body:'medium', acidity:'high', sweetness:'dry', foodTags:['fried','shellfish'], desc:'뵈브 클리코 로제 브뤼', image:'images/wine_011.png'},
+  {name:'뵈브 클리코 로제쿨러', importer:'엠에이치', price:99000, priceTier:'high', type:'sparkling', body:'medium', acidity:'high', sweetness:'dry', foodTags:['fried','shellfish'], desc:'뵈브 클리코 로제 브뤼', image:''},
+  {name:'라 펠리시다드 블랑 드 누아 보발', importer:'비노파라다이스', price:15000, priceTier:'low', type:'white', body:'light', acidity:'medium', sweetness:'dry', foodTags:['fried','shellfish'], desc:'보발 품종으로 만든 블랑 드 누아 스타일', image:'images/wine_105.png'},
+  {name:'빌라 노바 비뉴 베르드', importer:'한빛(카스카)', price:19500, priceTier:'low', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['fried','shellfish'], desc:'비뉴 베르드, 청량한 라이트바디', image:'images/wine_237.png'},
+  {name:'세스테이라 비뉴베르드', importer:'한빛(카스카)', price:20000, priceTier:'low', type:'white', body:'light', acidity:'high', sweetness:'dry', foodTags:['fried','shellfish'], desc:'비뉴 베르드', image:'images/wine_240.png'},
+  {name:'빌라 콘치 스파클링 제로(논알콜)', importer:'올드앤레어', price:24900, priceTier:'low', type:'non_alcohol', body:'light', acidity:'high', sweetness:'dry', foodTags:['cheese_unconfirmed','fried'], desc:'논알콜 스파클링', image:'images/wine_238.png'},
+  {name:'르쁘띠베레 블랑 드 블랑 스파클링', importer:'르쁘띠베레', price:28900, priceTier:'low', type:'non_alcohol', body:'light', acidity:'high', sweetness:'dry', foodTags:['cheese_unconfirmed','fried'], desc:'논알콜 블랑드블랑 스파클링', image:'images/wine_001.png'},
+  {name:'팔레나 브룻', importer:'이지와인', price:15000, priceTier:'low', type:'sparkling', body:'light', acidity:'high', sweetness:'dry', foodTags:['cheese_mild','cheese_salty','fried'], desc:'브뤼 스파클링', image:'images/wine_034.png'},
+  {name:'고타 데 마라비야 브륏', importer:'비노파라다이스', price:15000, priceTier:'low', type:'sparkling', body:'light', acidity:'high', sweetness:'dry', foodTags:['cheese_mild','cheese_salty','fried'], desc:'브뤼 스파클링', image:'images/wine_037.png'},
+  {name:'프로벤코 브륏', importer:'엘비와인', price:15000, priceTier:'low', type:'sparkling', body:'light', acidity:'high', sweetness:'dry', foodTags:['cheese_mild','cheese_salty','fried'], desc:'브뤼 스파클링', image:''},
+  {name:'무초 마스 엑스트라 드라이', importer:'케이에스와인', price:19900, priceTier:'low', type:'sparkling', body:'light', acidity:'high', sweetness:'medium', foodTags:['cheese_mild','cheese_salty','fried'], desc:'엑스트라 드라이, 브뤼보다 살짝 단맛', image:'images/wine_054.png'},
+  {name:'호메세라 브룻 까바', importer:'동원와인', price:20000, priceTier:'low', type:'sparkling', body:'light', acidity:'high', sweetness:'dry', foodTags:['cheese_unconfirmed','fried'], desc:'까바 브뤼', image:'images/wine_160.png'},
+  {name:'토소 피오코 디 비테 비앙코 프리잔떼', importer:'마이와인즈', price:20000, priceTier:'low', type:'sparkling', body:'light', acidity:'high', sweetness:'medium', foodTags:['cheese_mild','cheese_salty','fried'], desc:'아로마틱한 프리잔떼(약발포) 화이트', image:'images/wine_044.png'},
+  {name:'지로리보 에이비 오리진 브뤼', importer:'밀레짐와인', price:22500, priceTier:'low', type:'sparkling', body:'light', acidity:'high', sweetness:'dry', foodTags:['cheese_unconfirmed','fried'], desc:'브뤼 스파클링', image:''},
+  {name:'르 꼰떼쎄 스푸만테 퀴베 엑스트라 드라이', importer:'레드와인앤제이와이', price:22500, priceTier:'low', type:'sparkling', body:'light', acidity:'high', sweetness:'medium', foodTags:['cheese_unconfirmed','fried'], desc:'엑스트라 드라이 스푸만테', image:'images/wine_042.png'},
+  {name:'무사 까바 브륏', importer:'와이너리', price:23900, priceTier:'low', type:'sparkling', body:'light', acidity:'high', sweetness:'dry', foodTags:['cheese_unconfirmed','fried'], desc:'까바 브뤼', image:'images/wine_032.png'},
+  {name:'파펫 델 마스 까바 브룻 나뚜레', importer:'유와인', price:23900, priceTier:'low', type:'sparkling', body:'light', acidity:'high', sweetness:'dry', foodTags:['cheese_unconfirmed','fried'], desc:'브뤼 나뚜레, 가장 드라이한 스타일', image:'images/wine_101.png'},
+  {name:'보히가스 리제르바 까바 브륏', importer:'언노운와인', price:24900, priceTier:'low', type:'sparkling', body:'medium', acidity:'high', sweetness:'dry', foodTags:['cheese_unconfirmed','fried'], desc:'까바 리제르바 브뤼', image:'images/wine_111.png'},
+  {name:'보히가스 리제르바 네이쳐 브륏', importer:'언노운와인', price:24900, priceTier:'low', type:'sparkling', body:'medium', acidity:'high', sweetness:'dry', foodTags:['cheese_unconfirmed','fried'], desc:'브뤼 나뚜레', image:'images/wine_161.png'},
+  {name:'무사 까바 브륏 리제르바', importer:'와이너리', price:25900, priceTier:'low', type:'sparkling', body:'medium', acidity:'high', sweetness:'dry', foodTags:['cheese_unconfirmed','fried'], desc:'까바 리제르바 브뤼', image:'images/wine_005.png'},
+  {name:'나베란 다마 까바', importer:'와인네스트', price:29500, priceTier:'low', type:'sparkling', body:'light', acidity:'high', sweetness:'dry', foodTags:['cheese_unconfirmed','fried'], desc:'까바', image:'images/wine_220.png'},
+  {name:'보히가스 그랑 리제르바 엑스트라 브륏', importer:'언노운와인', price:29900, priceTier:'low', type:'sparkling', body:'medium', acidity:'high', sweetness:'dry', foodTags:['cheese_unconfirmed','fried'], desc:'엑스트라 브뤼, 매우 드라이한 까바 그랑리제르바', image:'images/wine_143.png'},
+  {name:'빌라 콘치 카바 브뤼 레제르바', importer:'올드앤레어', price:29900, priceTier:'low', type:'sparkling', body:'medium', acidity:'high', sweetness:'dry', foodTags:['cheese_unconfirmed','fried'], desc:'까바 리제르바 브뤼', image:''},
+  {name:'그랑꾸베 1531', importer:'이지와인', price:32500, priceTier:'mid', type:'sparkling', body:'light', acidity:'high', sweetness:'dry', foodTags:['cheese_unconfirmed','fried'], desc:'리무 크레망 브뤼', image:'images/wine_187.png'},
+  {name:'클라우디베이 펠로루스', importer:'엠에이치', price:45900, priceTier:'mid', type:'sparkling', body:'medium', acidity:'high', sweetness:'dry', foodTags:['cheese_unconfirmed','fried'], desc:'클라우디베이 펠로루스, 뉴질랜드 프리미엄 스파클링', image:'images/wine_153.png'},
+  {name:'루 뒤몽 크레망 드 부르고뉴', importer:'비티스', price:49900, priceTier:'mid', type:'sparkling', body:'medium', acidity:'high', sweetness:'dry', foodTags:['cheese_unconfirmed','fried'], desc:'크레망 드 부르고뉴', image:'images/wine_026.png'},
+  {name:'샴페인 샹제 보야지 360', importer:'인터/제이와인', price:59900, priceTier:'high', type:'sparkling', body:'medium', acidity:'high', sweetness:'dry', foodTags:['cheese_unconfirmed','fried'], desc:'샴페인 브뤼', image:'images/wine_124.png'},
+  {name:'모엣 샹동 (알병)', importer:'엠에이치', price:64900, priceTier:'high', type:'sparkling', body:'medium', acidity:'high', sweetness:'dry', foodTags:['cheese_unconfirmed','fried'], desc:'모엣샹동 브뤼 임페리얼', image:'images/wine_214.png'},
+  {name:'뵈브 클리코', importer:'엠에이치', price:79000, priceTier:'high', type:'sparkling', body:'medium', acidity:'high', sweetness:'dry', foodTags:['cheese_unconfirmed','fried'], desc:'뵈브 클리코 옐로우라벨 브뤼', image:'images/wine_082.png'},
+  {name:'샴페인 드라피에 까르뜨 도르 브륏', importer:'씨에스알', price:79000, priceTier:'high', type:'sparkling', body:'medium', acidity:'high', sweetness:'dry', foodTags:['cheese_unconfirmed','fried'], desc:'드라피에 까르뜨도르 브뤼', image:'images/wine_051.png'},
+  {name:'로랑페리에 라 뀌베', importer:'동원와인', price:85000, priceTier:'high', type:'sparkling', body:'medium', acidity:'high', sweetness:'dry', foodTags:['cheese_unconfirmed','fried'], desc:'로랑페리에 라 뀌베 브뤼', image:'images/wine_192.png'},
+  {name:'페리에 주에 그랑 브뤼', importer:'페르노리카', price:89000, priceTier:'high', type:'sparkling', body:'medium', acidity:'high', sweetness:'dry', foodTags:['cheese_unconfirmed','fried'], desc:'페리에주에 그랑브뤼', image:'images/wine_127.png'},
+  {name:'쟈크 꼬팡 샴페인 트레디숑 브룻', importer:'루뱅쿱', price:89000, priceTier:'high', type:'sparkling', body:'medium', acidity:'high', sweetness:'dry', foodTags:['cheese_unconfirmed','fried'], desc:'샴페인 브뤼', image:'images/wine_031.png'},
+  {name:'뵈브 클리코 옐로우쿨러', importer:'엠에이치', price:89000, priceTier:'high', type:'sparkling', body:'medium', acidity:'high', sweetness:'dry', foodTags:['cheese_unconfirmed','fried'], desc:'뵈브 클리코 브뤼', image:''},
+  {name:'루이나 블랑 드 블랑', importer:'엠에이치', price:127000, priceTier:'high', type:'sparkling', body:'medium', acidity:'high', sweetness:'dry', foodTags:['cheese_unconfirmed','fried'], desc:'루이나르 블랑드블랑, 프레스티지 샴페인', image:'images/wine_087.png'},
+  {name:'돔 페리뇽 17 [알병]', importer:'엠에이치', price:329000, priceTier:'high', type:'sparkling', body:'full', acidity:'high', sweetness:'dry', foodTags:['cheese_unconfirmed','fried'], desc:'돔페리뇽 빈티지, 프레스티지 샴페인', image:'images/wine_209.png'},
+  {name:'화이트 피크 리슬링', importer:'와이너리', price:19900, priceTier:'low', type:'white', body:'medium', acidity:'medium', sweetness:'sweet', foodTags:['dessert','spicy'], desc:'오프드라이 리슬링, 매운 음식과도 잘 어울림', image:''},
+  {name:'로랑 트루페르 무스까(무알콜)', importer:'까브드뱅', price:15900, priceTier:'low', type:'non_alcohol', body:'light', acidity:'low', sweetness:'sweet', foodTags:['dessert'], desc:'논알콜 스위트 스파클링', image:'images/wine_223.png'},
+  {name:'에레다드 드 알미즈라(무알콜)', importer:'케이셀라', price:19900, priceTier:'low', type:'non_alcohol', body:'light', acidity:'medium', sweetness:'sweet', foodTags:['dessert'], desc:'논알콜, 알코올 제거 과정에서 느껴지는 약간의 잔당감', image:'images/wine_010.png'},
+  {name:'르쁘띠베레 프로필 모스카토 스위트 다끼', importer:'르쁘띠베레', price:27900, priceTier:'low', type:'non_alcohol', body:'light', acidity:'low', sweetness:'sweet', foodTags:['dessert'], desc:'논알콜 모스카토 스타일 스위트', image:'images/wine_036.png'},
+  {name:'깐띠네 포베로 모스토 로쏘', importer:'더블유에스통상', price:20000, priceTier:'low', type:'red', body:'light', acidity:'low', sweetness:'sweet', foodTags:['dessert'], desc:'레드 프리잔테 계열의 스위트 와인', image:'images/wine_070.png'},
+  {name:'람부르스코 아이쥐티 에밀리아 로쏘', importer:'비눔인터내셔널', price:20000, priceTier:'low', type:'red', body:'light', acidity:'high', sweetness:'sweet', foodTags:['dessert'], desc:'람부르스코, 레드 스파클링의 스위트한 여운', image:'images/wine_221.png'},
+  {name:'모로 8 람부르스코', importer:'나루글로벌', price:23500, priceTier:'low', type:'red', body:'light', acidity:'medium', sweetness:'sweet', foodTags:['dessert'], desc:'람부르스코, 스위트한 레드 스파클링', image:'images/wine_158.png'},
+  {name:'토소 피오코 디 비테 브라케토 다뀌', importer:'마이와인즈', price:24500, priceTier:'low', type:'red', body:'light', acidity:'medium', sweetness:'sweet', foodTags:['dessert'], desc:'브라케토 다퀴, 은은한 단맛의 아로마틱 레드', image:'images/wine_008.png'},
+  {name:'레볼리', importer:'수빈셀렉션', price:29900, priceTier:'low', type:'red', body:'light', acidity:'medium', sweetness:'sweet', foodTags:['dessert'], desc:'람부르스코, 체리향의 스위트 레드 스파클링', image:'images/wine_222.png'},
+  {name:'토죠 모스카토 스푸만테 로제', importer:'비노파라다이스', price:17900, priceTier:'low', type:'rose', body:'light', acidity:'medium', sweetness:'sweet', foodTags:['dessert'], desc:'로제 스파클링, 은은한 단맛', image:'images/wine_073.png'},
+  {name:'빌라 욜란다 모스카토 로제', importer:'씨에스알', price:19500, priceTier:'low', type:'rose', body:'light', acidity:'medium', sweetness:'sweet', foodTags:['dessert'], desc:'모스카토 로제, 가볍고 달콤함', image:'images/wine_128.png'},
+  {name:'빈야드 모스카토 스푸만테', importer:'인터/제이와인', price:15000, priceTier:'low', type:'sparkling', body:'light', acidity:'low', sweetness:'sweet', foodTags:['dessert'], desc:'모스카토 스푸만테, 달콤한 스파클링', image:'images/wine_236.png'},
+  {name:'샤를 루 블랑 드 블랑 드미섹', importer:'까브드뱅', price:19500, priceTier:'low', type:'sparkling', body:'light', acidity:'high', sweetness:'medium', foodTags:['cheese_mild','cheese_salty','dessert'], desc:'드미섹, 은은한 단맛의 블랑드블랑', image:'images/wine_021.png'},
+  {name:'비에티 모스카토 다스티', importer:'나라셀라', price:35000, priceTier:'mid', type:'white', body:'light', acidity:'medium', sweetness:'sweet', foodTags:['dessert'], desc:'모스카토 다스티, 비에티', image:'images/wine_103.png'},
+  {name:'그로 망송 스위트', importer:'비노쿠스', price:15000, priceTier:'low', type:'white', body:'medium', acidity:'low', sweetness:'sweet', foodTags:['cheese_mild','dessert'], desc:'스위트한 만생종 화이트, 디저트와인', image:'images/wine_218.png'},
+  {name:'발레벨보 그란 디저트 제주', importer:'레뱅드매일', price:17900, priceTier:'low', type:'white', body:'light', acidity:'medium', sweetness:'sweet', foodTags:['cheese_mild','cheese_salty','dessert'], desc:'모스카토 기반의 달콤하고 상큼한 화이트', image:'images/wine_123.png'},
+  {name:'빌라 욜란다 모스카토 다스티', importer:'씨에스알', price:19500, priceTier:'low', type:'white', body:'light', acidity:'medium', sweetness:'sweet', foodTags:['dessert'], desc:'모스카토 다스티, 낮은 도수의 스위트 화이트', image:'images/wine_067.png'},
+  {name:'첸토리 모스카토 디 파비아', importer:'와이너리', price:19500, priceTier:'low', type:'white', body:'light', acidity:'medium', sweetness:'sweet', foodTags:['dessert'], desc:'모스카토 디 파비아, 프리잔테 스위트 화이트', image:'images/wine_041.png'},
+  {name:'벨 콜레 모스카토 다스티 아모레 돌체', importer:'호메오와인갤러리', price:19900, priceTier:'low', type:'white', body:'light', acidity:'medium', sweetness:'sweet', foodTags:['dessert'], desc:'모스카토 다스티, 꽃향과 단맛', image:'images/wine_107.png'},
+  {name:'미라벤토 모스카토 다스티', importer:'유와인', price:19900, priceTier:'low', type:'white', body:'light', acidity:'low', sweetness:'sweet', foodTags:['dessert'], desc:'모스카토 다스티, 가볍고 향긋한 스위트 화이트', image:'images/wine_013.png'},
+  {name:'깐띠네 포베로 모스카토 다스티', importer:'더블유에스통상', price:19900, priceTier:'low', type:'white', body:'light', acidity:'medium', sweetness:'sweet', foodTags:['dessert'], desc:'모스카토 다스티, 이탈리아 피에몬테 스타일', image:'images/wine_038.png'},
+  {name:'보스타반 모스카토', importer:'프라임', price:20000, priceTier:'low', type:'white', body:'light', acidity:'medium', sweetness:'sweet', foodTags:['dessert'], desc:'모스카토, 낮은 도수의 스위트 화이트', image:'images/wine_108.png'},
+  {name:'토소 피오코 디 비테 모스카토 다스티', importer:'마이와인즈', price:24500, priceTier:'low', type:'white', body:'light', acidity:'medium', sweetness:'sweet', foodTags:['dessert'], desc:'모스카토 다스티, 가벼운 스위트 화이트', image:'images/wine_106.png'},
+  {name:'라 스피네타 모스카토 브리꼬 콸리아', importer:'루뱅쿱', price:32900, priceTier:'mid', type:'white', body:'light', acidity:'medium', sweetness:'sweet', foodTags:['dessert'], desc:'모스카토, 화사한 꽃향의 스위트 화이트', image:'images/wine_074.png'},
+  {name:'스피노 비앙코 모스카토 다스티', importer:'루뱅쿱', price:32900, priceTier:'mid', type:'white', body:'light', acidity:'medium', sweetness:'sweet', foodTags:['dessert'], desc:'모스카토 다스티, 가벼운 스위트 화이트', image:'images/wine_241.png'},
+  {name:'사라코 모스카토 다스티', importer:'서울와인앤스피릿', price:36500, priceTier:'mid', type:'white', body:'light', acidity:'medium', sweetness:'sweet', foodTags:['dessert'], desc:'모스카토 다스티, 은은한 단맛과 산미', image:'images/wine_183.png'},
+  {name:'블라송 루즈 브뤼', importer:'타이거인터내셔날', price:29900, priceTier:'low', type:'sparkling', body:'light', acidity:'high', sweetness:'dry', foodTags:['cheese_unconfirmed'], desc:'레드 스파클링 브뤼', image:'images/wine_110.png'},
+  {name:'카베사 두 포트 루비 포트', importer:'비넘', price:22900, priceTier:'low', type:'red', body:'full', acidity:'low', sweetness:'sweet', foodTags:['dessert'], desc:'', image:'images/wine_247.png'},
+  {name:'미구엘 토니 포트', importer:'유와인', price:23500, priceTier:'low', type:'red', body:'full', acidity:'low', sweetness:'sweet', foodTags:['dessert'], desc:'', image:'images/wine_166.png'},
+  {name:'콥케 파인 화이트 포트', importer:'케이앤제이와인', price:24500, priceTier:'low', type:'white', body:'full', acidity:'low', sweetness:'sweet', foodTags:['dessert'], desc:'', image:'images/wine_116.png'},
+  {name:'콥케 파인 루비 포트', importer:'케이앤제이와인', price:24900, priceTier:'low', type:'red', body:'full', acidity:'low', sweetness:'sweet', foodTags:['dessert'], desc:'', image:'images/wine_055.png'},
+  {name:'콥케 파인 타우니 포트', importer:'케이앤제이와인', price:24900, priceTier:'low', type:'red', body:'full', acidity:'low', sweetness:'sweet', foodTags:['dessert'], desc:'', image:'images/wine_099.png'},
+  {name:'포티 파인 루비', importer:'한빛(카스카)', price:24900, priceTier:'low', type:'red', body:'full', acidity:'low', sweetness:'sweet', foodTags:['dessert'], desc:'', image:'images/wine_096.png'},
+  {name:'미스티힐스 아이스 비달 와인', importer:'롯데칠성음료', price:28900, priceTier:'low', type:'white', body:'full', acidity:'medium', sweetness:'sweet', foodTags:['dessert'], desc:'', image:'images/wine_148.png'},
+  {name:'폴레츠키 토카이 사모로드니 500ml', importer:'밀레짐와인', price:29900, priceTier:'low', type:'white', body:'full', acidity:'medium', sweetness:'sweet', foodTags:['dessert'], desc:'', image:'images/wine_250.png'},
+  {name:'콥케 리제르바 타우니 포트', importer:'케이앤제이와인', price:29900, priceTier:'low', type:'red', body:'full', acidity:'low', sweetness:'sweet', foodTags:['dessert'], desc:'', image:'images/wine_117.png'},
+  {name:'그라함 식스 그레이프', importer:'까브드뱅', price:49900, priceTier:'mid', type:'red', body:'full', acidity:'low', sweetness:'sweet', foodTags:['dessert'], desc:'', image:'images/wine_072.png'},
+  {name:'샤또 데레즐라 5', importer:'빈티지코리아', price:79000, priceTier:'high', type:'white', body:'full', acidity:'high', sweetness:'sweet', foodTags:['dessert'], desc:'', image:'images/wine_003.png'},
+  {name:'불라스 포르토 20년 토니', importer:'한빛(카스카)', price:89900, priceTier:'high', type:'red', body:'full', acidity:'low', sweetness:'sweet', foodTags:['dessert'], desc:'', image:'images/wine_235.png'}
+];
+
+const QUOTES = [
+  '와인은 정답이 없어요. 오늘 마음이 정답입니다.',
+  '오늘 고른 이 한 병이, 누군가에겐 완벽한 타이밍일 거예요.',
+  '완벽한 와인보다, 지금 이 순간에 어울리는 와인을 찾았어요.',
+  '아는 만큼 보이는 게 아니라, 좋아하는 만큼 맛있는 거예요.',
+  '가끔은 이유 없이, 그냥 끌리는 한 잔이 정답일 때가 있어요.'
+];
+
+/* ---------- 상태 & 흐름 제어 ---------- */
+const state = { food:null, foodSub:null, foodSubSub:null, foodTag:null, type:null, body:null, acidity:null, sweetness:null };
+let flowSteps = ['food','type','quick','sweet','acid','body','result'];
+let stepIndex = 0;
+
+function renderOptions(containerId, items, key, extra){
+  const el = document.getElementById(containerId);
+  el.innerHTML = '';
+  items.forEach(item=>{
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    let inner = '';
+    if(item.eyebrow) inner += '<span class="opt-eyebrow">'+item.eyebrow+'</span>';
+    else if(item.icon) inner += '<span class="opt-icon">'+item.icon+'</span>';
+    inner += item.label.replace('\n','<br>');
+    if(item.badge) inner += '<span class="opt-badge">'+item.badge+'</span>';
+    if(item.desc) inner += '<span class="opt-desc">'+item.desc+'</span>';
+    if(item.desc2) inner += '<span class="opt-desc2">'+item.desc2+'</span>';
+    btn.innerHTML = inner;
+    btn.onclick = ()=> choose(key, item, extra);
+    el.appendChild(btn);
+  });
+}
+
+renderOptions('foodOptions', FOOD_CATEGORIES, 'food');
+renderOptions('bodyOptions', BODY_OPTIONS, 'body');
+renderOptions('acidOptions', ACID_OPTIONS, 'acidity');
+renderOptions('sweetOptions', SWEET_OPTIONS, 'sweetness');
+
+const NEUTRAL_WINE = '#6B2633'; // 타입 선택 전 기본색 = 딥 버건디(accent)
+const BOWL_TOP = 15, BOWL_BOTTOM = 90, BOWL_HEIGHT = 75, BOWL_MAX_HALF_WIDTH = 30;
+function setGlass(percent, color){
+  const liquid = document.getElementById('liquid');
+  const surface = document.getElementById('liquidSurface');
+  const h = (percent/100) * BOWL_HEIGHT;
+  const topY = BOWL_BOTTOM - h;
+  liquid.setAttribute('y', topY);
+  liquid.setAttribute('height', h + 10);
+
+  const halfWidth = Math.max(1.5, BOWL_MAX_HALF_WIDTH * (1 - (topY - BOWL_TOP) / BOWL_HEIGHT));
+  surface.setAttribute('cy', topY);
+  surface.setAttribute('rx', halfWidth);
+
+  if(color){
+    document.getElementById('liquidStopTop').setAttribute('stop-color', color);
+    document.getElementById('liquidStopBottom').setAttribute('stop-color', color);
+  }
+}
+
+function showStep(id){
+  document.querySelectorAll('.step').forEach(s=> s.classList.remove('active'));
+  document.getElementById('step-'+id).classList.add('active');
+}
+
+/* 'fortified'는 곁가지 안내창이라 진행률 계산에서 제외 */
+function pad2(n){ return n<10 ? '0'+n : ''+n; }
+
+function updateProgress(){
+  const countable = flowSteps.filter(s=> s!=='result' && s!=='fortified');
+  const total = countable.length;
+  const idx = countable.indexOf(flowSteps[stepIndex]);
+  const shown = Math.max(1, Math.min(idx+1, total));
+  document.getElementById('progressLabel').textContent = pad2(shown) + ' / ' + pad2(total);
+  document.getElementById('progressFill').style.width = ((shown/total)*100) + '%';
+  setGlass((shown/total)*100, state.type ? TYPE_OPTIONS.find(t=>t.id===state.type).color : NEUTRAL_WINE);
+}
+
+function goTo(stepName){
+  stepIndex = flowSteps.indexOf(stepName);
+  showStep(stepName);
+  if(stepName !== 'result' && stepName !== 'fortified') updateProgress();
+}
+
+function goBack(){
+  if(stepIndex > 0){
+    goTo(flowSteps[stepIndex-1]);
+  } else {
+    goTo('food');
+  }
+}
+
+/* ---------- 음식 선택 후 타입 단계로 진입 (음식별로 선택 가능한 타입만 필터링, 우선추천 배지 적용) ---------- */
+function proceedFromFoodTag(tagId){
+  state.foodTag = tagId;
+  const opts = getTypeOptionsForFood(tagId);
+  renderOptions('typeOptions', opts, 'type');
+  goTo('type');
+}
+
+function choose(key, item){
+  if(key === 'food'){
+    state.food = item.id;
+    if(item.sub){
+      document.getElementById('foodSubQuestion').textContent = item.label.split('\n')[0] + ' 중 어떤 걸로 하시겠어요?';
+      renderOptions('foodSubOptions', item.sub, 'foodSub');
+      flowSteps = ['food','foodSub','type','quick','sweet','acid','body','result'];
+      goTo('foodSub');
+    } else {
+      flowSteps = ['food','type','quick','sweet','acid','body','result'];
+      proceedFromFoodTag(item.id);
+    }
+  } else if(key === 'foodSub'){
+    state.foodSub = item.id;
+    if(item.sub){
+      document.getElementById('foodSubSubQuestion').textContent = item.label.split('\n')[0] + ' 중 어떤 걸로 하시겠어요?';
+      renderOptions('foodSubSubOptions', item.sub, 'foodSubSub');
+      flowSteps = ['food','foodSub','foodSubSub','type','quick','sweet','acid','body','result'];
+      goTo('foodSubSub');
+    } else {
+      flowSteps = ['food','foodSub','type','quick','sweet','acid','body','result'];
+      proceedFromFoodTag(item.id);
+    }
+  } else if(key === 'foodSubSub'){
+    state.foodSubSub = item.id;
+    flowSteps = ['food','foodSub','foodSubSub','type','quick','sweet','acid','body','result'];
+    proceedFromFoodTag(item.id);
+  } else if(key === 'type'){
+    state.type = item.id;
+    /* 뒤로가서 타입을 다시 고른 경우, 이전 패스에서 답했던 당도/산미/바디감이
+       새 조합에 잘못 섞여 들어가지 않도록 초기화 */
+    state.sweetness = null;
+    state.acidity = null;
+    state.body = null;
+    showQuickResult();
+  } else if(key === 'sweetness'){
+    state.sweetness = item.id;
+    if(state.type === FORTIFIED_TYPE_SWEETNESS.type && item.id === FORTIFIED_TYPE_SWEETNESS.sweetness){
+      goTo('fortified');
+    } else {
+      goTo('acid');
+    }
+  } else if(key === 'acidity'){
+    state.acidity = item.id;
+    goTo('body');
+  } else if(key === 'body'){
+    state.body = item.id;
+    showResult();
+  }
+}
+
+/* ---------- 매칭 로직: 가격대는 묻지 않고, 저/중/고 3개 가격대에서 취향에 가장 맞는 와인을 하나씩 골라 보여줌.
+   state의 필드가 null이면(디저트류처럼 산미/당도를 안 물어본 경우) 해당 조건은 걸지 않음. ---------- */
+function pickBestInPool(pool, opts){
+  opts = opts || {};
+  const useBody = !opts.ignoreBody;
+  const matchFood = w=> !state.foodTag || w.foodTags.includes(state.foodTag);
+  const matchType = w=> w.type===state.type;
+  const matchBody = w=> !useBody || state.body===null || state.body===undefined || w.body===state.body;
+  const matchAcid = w=> state.acidity===null || state.acidity===undefined || w.acidity===state.acidity;
+  const matchSweet = w=> state.sweetness===null || state.sweetness===undefined || w.sweetness===state.sweetness;
+
+  let result = pool.filter(w=> matchType(w) && matchBody(w) && matchAcid(w) && matchSweet(w) && matchFood(w));
+  if(result.length > 0) return {wine: result[0], relaxed:false};
+  result = pool.filter(w=> matchType(w) && matchBody(w) && matchAcid(w) && matchSweet(w));
+  if(result.length > 0) return {wine: result[0], relaxed:true};
+  result = pool.filter(w=> matchType(w) && matchBody(w) && matchSweet(w));
+  if(result.length > 0) return {wine: result[0], relaxed:true};
+  result = pool.filter(w=> matchType(w) && matchBody(w));
+  if(result.length > 0) return {wine: result[0], relaxed:true};
+  result = pool.filter(w=> matchType(w));
+  if(result.length > 0) return {wine: result[0], relaxed:true};
+  /* 이 가격대엔 사용자가 고른 타입의 와인이 아예 없음 - 타입을 깨면서까지 다른 와인을 보여주지 않고
+     이 가격대 칸은 그냥 비워둔다 (findMatches에서 null 처리) */
+  return null;
+}
+
+function findMatches(opts){
+  let anyRelaxed = false;
+  let anyEmpty = false;
+  const wines = [];
+  PRICE_TIERS.forEach(tier=>{
+    const tierPool = WINES.filter(w=> w.priceTier === tier.id);
+    if(tierPool.length === 0) return; // 해당 가격대에 등록된 와인이 아예 없으면 그 칸은 건너뜀
+    const picked = pickBestInPool(tierPool, opts);
+    if(picked){
+      if(picked.relaxed) anyRelaxed = true;
+      wines.push(picked.wine);
+    } else {
+      anyEmpty = true; // 이 가격대엔 선택한 타입의 와인이 없어서 비워둠 (타입을 깨지 않음)
+    }
+  });
+  let note = '';
+  if(anyEmpty) note = '선택하신 타입은 일부 가격대에 아직 준비된 와인이 없어요. 직원에게 문의해주시면 더 찾아드릴게요.';
+  else if(anyRelaxed) note = '가격대별로 취향에 딱 맞는 와인이 없는 경우, 같은 타입 내에서 가장 가까운 와인으로 채웠어요.';
+  return {wines, note};
+}
+
+function getFoodChipLabel(){
+  const cat = FOOD_CATEGORIES.find(c=>c.id===state.food);
+  if(!cat) return '';
+  let sub = cat.sub && state.foodSub ? cat.sub.find(s=>s.id===state.foodSub) : null;
+  if(sub && sub.sub && state.foodSubSub){
+    const subsub = sub.sub.find(s=>s.id===state.foodSubSub);
+    if(subsub) return subsub.label.split('\n')[0];
+  }
+  if(sub) return sub.label.split('\n')[0];
+  return cat.label.split('\n')[0];
+}
+
+function handleWineImgError(imgEl){
+  imgEl.outerHTML = '<span class="wine-image-placeholder">🍷</span>';
+}
+
+function renderWineCards(container, wines){
+  container.innerHTML = '';
+  if(wines.length === 0){
+    container.innerHTML = '<p class="hint" style="text-align:center;">아직 등록된 와인이 부족해요. 직원에게 문의해주세요!</p>';
+    return;
+  }
+  wines.forEach((w, i)=>{
+    const card = document.createElement('div');
+    card.className = i===0 ? 'wine-card featured' : 'wine-card';
+    const typeLabel = (TYPE_OPTIONS.find(t=>t.id===w.type)||{}).label || '';
+    const priceLabel = (PRICE_TIERS.find(t=>t.id===w.priceTier)||{}).label || '';
+    card.innerHTML =
+      '<div class="wine-image-wrap">' +
+      (w.image
+        ? '<img class="wine-image" src="'+w.image+'" alt="" onerror="handleWineImgError(this)">'
+        : '<span class="wine-image-placeholder">🍷</span>') +
+      '</div>' +
+      '<p class="wine-name">'+w.name+'</p>' +
+      '<p class="wine-meta">'+typeLabel+'</p>' +
+      '<p class="wine-desc">'+w.desc+'</p>' +
+      '<p class="wine-price">'+priceLabel+'</p>';
+    container.appendChild(card);
+  });
+}
+
+/* ---------- 1차: 음식+타입만으로 대표 와인 3개 즉시 추천 ---------- */
+function showQuickResult(){
+  const typeLabel = TYPE_OPTIONS.find(t=>t.id===state.type).label;
+  document.getElementById('quickChips').innerHTML =
+    '<span class="chip">'+getFoodChipLabel()+'</span><span class="chip">'+typeLabel+'</span>';
+
+  const {wines, note} = findMatches({ignoreBody:true});
+  renderWineCards(document.getElementById('quickResultList'), wines);
+
+  const fbEl = document.getElementById('quickFallbackNote');
+  if(note){ fbEl.textContent = note; fbEl.style.display = 'block'; }
+  else { fbEl.style.display = 'none'; }
+
+  const noteEl = document.getElementById('quickWhyNote');
+  const whyNote = TYPE_EXCLUSION_NOTES[state.foodTag];
+  if(whyNote){ noteEl.innerHTML = '<span class="why-label">Why This Wine</span>'+whyNote; noteEl.style.display = 'block'; }
+  else { noteEl.style.display = 'none'; }
+
+  goTo('quick');
+}
+
+/* ---------- '더 세부적으로 추천해드릴까요?' → 디저트류는 당도/산미 건너뛰고 바디감만 ---------- */
+function goToDetailFlow(){
+  if(state.foodTag === 'dessert'){
+    state.sweetness = null;
+    state.acidity = null;
+    flowSteps = ['food','type','quick','body','result'];
+    goTo('body');
+  } else {
+    goTo('sweet');
+  }
+}
+
+function showResult(){
+  const typeLabel = TYPE_OPTIONS.find(t=>t.id===state.type).label;
+  const bodyLabel = BODY_OPTIONS.find(b=>b.id===state.body).label;
+  const chips = [getFoodChipLabel(), typeLabel, bodyLabel];
+  if(state.acidity) chips.push('산미 '+ACID_OPTIONS.find(a=>a.id===state.acidity).label);
+  if(state.sweetness) chips.push(SWEET_OPTIONS.find(s=>s.id===state.sweetness).label.replace('\n',' '));
+  document.getElementById('choiceChips').innerHTML = chips.map(c=>'<span class="chip">'+c+'</span>').join('');
+
+  const {wines, note} = findMatches();
+  const noteEl = document.getElementById('fallbackNote');
+  if(note){ noteEl.textContent = note; noteEl.style.display = 'block'; }
+  else { noteEl.style.display = 'none'; }
+
+  renderWineCards(document.getElementById('resultList'), wines);
+
+  const whyEl = document.getElementById('resultWhyNote');
+  const why = TYPE_EXCLUSION_NOTES[state.foodTag];
+  if(why){ whyEl.innerHTML = '<span class="why-label">Why This Wine</span>'+why; whyEl.style.display = 'block'; }
+  else { whyEl.style.display = 'none'; }
+
+  document.getElementById('quoteText').textContent = QUOTES[Math.floor(Math.random()*QUOTES.length)];
+  document.getElementById('progressLabel').textContent = '완료';
+  document.getElementById('progressFill').style.width = '100%';
+  showStep('result');
+}
+
+function restart(){
+  state.food=null; state.foodSub=null; state.foodSubSub=null; state.foodTag=null; state.type=null; state.body=null; state.acidity=null; state.sweetness=null;
+  flowSteps = ['food','type','quick','sweet','acid','body','result'];
+  stepIndex = 0;
+  setGlass(0, NEUTRAL_WINE);
+  updateProgress();
+  showStep('food');
+}
+
+updateProgress();
+</script>
+</body>
+</html>
