@@ -161,6 +161,15 @@
   }
   .back-link:hover{ background:#3E1650; }
   .back-link:active{ transform:scale(0.96); }
+  .type-reason{
+    font-size:12.5px;
+    line-height:1.5;
+    color:var(--accent);
+    background:var(--accent-soft);
+    border-radius:10px;
+    padding:9px 12px;
+    margin:-0.4rem 0 1rem;
+  }
   .ghost-btn{
     width:100%;
     background:transparent;
@@ -425,6 +434,7 @@
     <div class="step" id="step-type">
       <span class="back-link" id="typeBackLink" onclick="goBack()">← 다시 고르기</span>
       <p class="question" id="typeQuestion">어떤 타입을 선호하세요?</p>
+      <p class="type-reason" id="typeReason" style="display:none;"></p>
       <div class="options cols-3" id="typeOptions"></div>
     </div>
 
@@ -541,7 +551,7 @@ const FOOD_TYPE_RESTRICTIONS = {
   redfish:   ['white','sparkling','non_alcohol'],
   whitefish: ['white','rose','sparkling','non_alcohol'],
   shellfish: ['white','rose','sparkling','non_alcohol'],
-  spicy:     ['red','white','sparkling','non_alcohol']
+  spicy:     ['white','sparkling','non_alcohol']
 };
 /* 튀김류는 더 이상 스파클링으로 고정하지 않음 - 전체 타입 선택 가능하되, 스파클링을 '추천' 배지로 우선 노출 */
 const FOOD_TYPE_PRIORITY = { fried: 'sparkling' };
@@ -853,7 +863,7 @@ const WINES = [
   {name:'샤또 라 퐁텐 소떼른', importer:'프라임', price:57000, priceTier:'mid', type:'white', body:'medium', acidity:'medium', sweetness:'sweet', foodTags:['dessert','cheese_mild'], desc:'살구, 복숭아, 잘익은 열대과일 아로마, 복숭아, 꿀, 마말레이드의 강렬한 당도', image:'images/wine_274.png'},
   {name:'바라 토카이 6 푸토뇨스 500ml', importer:'빈티지코리아', price:69000, priceTier:'mid', type:'white', body:'full', acidity:'medium', sweetness:'sweet', foodTags:['dessert','cheese_mild'], desc:'사과 살구등의 과일 향, 옅은 향신료, 민트 커피의 아로마, 복숭아, 열대과일, 벌꿀의 농익은 맛과 스파이스', image:'images/wine_272.png'},
   {name:'메종 오포아 사모로드니', importer:'동원와인', price:85000, priceTier:'mid', type:'white', body:'full', acidity:'medium', sweetness:'sweet', foodTags:['dessert','cheese_mild'], desc:'풍부한 미네랄과 꿀향, 숙성되고 인위적이지 않은 라임 뉘앙스의 좋은 산도', image:'images/wine_270.png'},
-  {name:'샤또 시몽 쏘떼른 뀌베 익셉셔널 12', importer:'밀레짐와인', price:109000, priceTier:'high', type:'white', body:'full', acidity:'medium', sweetness:'dry', foodTags:['dessert','cheese_mild'], desc:'잘 익은 오렌지향과 우아한 꿀향 참외, 말린살구처럼 잘 익은 과일의 달콤한 맛', image:'images/wine_280.png'},
+  {name:'샤또 시몽 쏘떼른 뀌베 익셉셔널 12', importer:'밀레짐와인', price:109000, priceTier:'high', type:'white', body:'full', acidity:'medium', sweetness:'sweet', foodTags:['dessert','cheese_mild'], desc:'잘 익은 오렌지향과 우아한 꿀향 참외, 말린살구처럼 잘 익은 과일의 달콤한 맛', image:'images/wine_280.png'},
   {name:'샤또 시몽 쏘떼른 뀌베 익셉셔널 09', importer:'밀레짐와인', price:109000, priceTier:'high', type:'white', body:'full', acidity:'medium', sweetness:'sweet', foodTags:['dessert','cheese_mild'], desc:'꿀과 말린 과일, 은은한 견과류 풍미의 여운', image:'images/wine_276.png'},
   {name:'샤또 레이몽 라퐁 03', importer:'신세계', price:135000, priceTier:'high', type:'white', body:'full', acidity:'low', sweetness:'sweet', foodTags:['dessert','cheese_mild'], desc:'기분 좋은 단맛에 감귤향 같은 향, 말린 살구, 꿀, 오렌지껍질', image:'images/wine_275.png'},
   {name:'르 메닐 브룻 샴페인 그랑끄루 블랑 드 블랑 NV', importer:'루뱅쿱', price:99000, priceTier:'high', type:'sparkling', body:'light', acidity:'high', sweetness:'dry', foodTags:['redfish','fried','cheese_salty'], desc:'균형 잡힌 산도와 구운 헤이즐넛, 숙성된 과일의 향이 조화를 이루어 복합적인 맛', image:'images/wine_269.png'},
@@ -953,8 +963,22 @@ function goBack(){
 }
 
 /* ---------- 음식 선택 후 타입 단계로 진입 (음식별로 선택 가능한 타입만 필터링, 우선추천 배지 적용) ---------- */
+/* 타입 선택 화면 상단 한 줄 안내 — 일부 타입이 빠진 음식 + 튀김류(스파클링 추천)에 표시 */
+const TYPE_REASON_LINES = {
+  pork:      '고기 요리에는 기름진 맛을 깔끔하게 잡아주는 레드 위주로 보여드려요.',
+  beef:      '고기 요리에는 기름진 맛을 깔끔하게 잡아주는 레드 위주로 보여드려요.',
+  lamb:      '고기 요리에는 기름진 맛을 깔끔하게 잡아주는 레드 위주로 보여드려요.',
+  redfish:   '생선 요리에는 비린 맛을 줄여주는 화이트·스파클링 위주로 보여드려요.',
+  whitefish: '생선 요리에는 비린 맛을 줄여주는 화이트·스파클링 위주로 보여드려요.',
+  shellfish: '해산물 요리에는 비린 맛을 줄여주는 화이트·스파클링 위주로 보여드려요.',
+  spicy:     '매운 음식에는 화끈거림을 덜어주는 부드러운 와인 위주로 보여드려요.',
+  fried:     '튀김에는 기포와 산도가 기름진 맛을 잡아주는 스파클링을 특히 추천해요.'
+};
 function proceedFromFoodTag(tagId){
   state.foodTag = tagId;
+  const reasonEl = document.getElementById('typeReason');
+  if(TYPE_REASON_LINES[tagId]){ reasonEl.textContent = TYPE_REASON_LINES[tagId]; reasonEl.style.display = 'block'; }
+  else { reasonEl.textContent = ''; reasonEl.style.display = 'none'; }
   const opts = getTypeOptionsForFood(tagId);
   renderOptions('typeOptions', opts, 'type');
   goTo('type');
