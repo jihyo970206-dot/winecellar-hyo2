@@ -1105,9 +1105,14 @@ function findQuickMatches(){
   const hardFilter = w=> w.type === state.type && (!state.foodTag || w.foodTags.includes(state.foodTag));
   const pool = WINES.filter(hardFilter);
   const rnd = makeTieBreaker(pool);
+  /* 2026-10-30: 1차 추천은 취향을 묻기 전이므로, 디저트·치즈가 아닌 음식에서는
+     달콤한 주정강화 레드(포트 등)를 맨 뒤로 미룬다. 다른 와인으로 채울 수 없을 때만 나온다.
+     (당도 '스위트'를 직접 고른 2차 추천에는 적용하지 않음) */
+  const fortifiedLast = !['dessert','cheese_mild','cheese_salty'].includes(state.foodTag);
   const costFn = (w, tierId)=>{
     const exact = (w.priceTier === tierId) ? 0 : 1;
-    return exact*1000000 + (exact===0 ? rnd.get(w) : priceDist(w, tierId));
+    const fort = (fortifiedLast && w.type === FORTIFIED_TYPE_SWEETNESS.type && w.sweetness === FORTIFIED_TYPE_SWEETNESS.sweetness) ? 1 : 0;
+    return fort*100000000 + exact*1000000 + (exact===0 ? rnd.get(w) : priceDist(w, tierId));
   };
   const matchResult = solveAssignment(pool, costFn);
 
